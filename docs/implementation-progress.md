@@ -3,8 +3,8 @@
 | Stage | Evidence | Status |
 |---|---|---|
 | P01 | PR #6; just setup, just check and GitHub ci passed | Merged |
-| P02 | just check, just governance-check; hooks and remote settings verified | Implemented |
-| P03 | Issue #3 | Planned |
+| P02 | PR #7; just check, just governance-check and branch-guard verification passed | Merged |
+| P03 | 11 unit tests; db-config/db-up/db-status; persistence verified after recreation | Implemented |
 | P04 | Issue #4 | Planned |
 | P05 | Issue #5 | Planned |
 

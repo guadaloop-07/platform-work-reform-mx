@@ -20,6 +20,11 @@ jobs:
       - run: uv sync --locked
       - run: uv lock --check
       - run: uv run --locked pre-commit run --all-files --hook-stage manual
+      - run: uv run --locked pytest -m 'not integration'
+      - name: Validate Compose configuration
+        env:
+          PWR_POSTGRES_PASSWORD: ci-configuration-only
+        run: docker compose config --quiet
   ci:
     if: always()
     needs: [quality]
