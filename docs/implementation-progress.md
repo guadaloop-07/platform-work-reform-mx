@@ -6,17 +6,33 @@
 | P02 | PR #7; just check, just governance-check and branch-guard verification passed | Merged |
 | P03 | PR #8; 11 unit tests; local connection and container-recreation persistence passed | Merged |
 | P04 | PR #9; 11 unit and 4 isolated PostgreSQL tests; local migration passed | Merged |
-| P05 | 11 unit + 9 integration tests; local backup restored and verified independently | Implemented |
+| P05 | PR #10; backup restored and verified independently | Merged |
+| P06 | PR #12; 45 local source files inventoried | Merged |
+| P07 | PR #14; strict encoding inspection and normalization | Merged |
+| P08 | PR #18; source layout contracts | Merged |
+| P09 | PR #20; transactional staging and pilot | Merged |
+| P10 | PR #22; reconciled monthly selection and analysis view | Merged |
+| P11 | PR #26; resumable batch with storage guard | Merged |
+| P12–P13 | 44 months staged, independently reconciled and selected; one exception | Partial |
 
 Main protection was enabled before the first PR was merged. The ci check was
-observed and made mandatory before merging PR #6. No empirical data is loaded.
+observed and made mandatory before merging PR #6.
 
-P01–P05 are implemented. PostgreSQL listens on loopback port 55432 and contains
-revision 0001 with empty research namespaces. The private .env, persistent volume,
-and backup artifacts are excluded from Git. A recovery validation database named
+PostgreSQL listens on loopback port 55432 and contains migration revision 0003.
+The private .env, persistent volume, and backup artifacts are excluded from Git.
+A recovery validation database named
 platform_work_reform_restore_initial_validation was restored successfully and
 retained for inspection; it is not the active project database.
 
-P06 adds local source inventory and hashes. P07–P20 and causal analysis have not
-started. Shared deployment and least-privilege analyst accounts
-remain P19; the present service is local infrastructure only.
+As of 2026-10-28, the selected IMSS view contains 44 monthly datasets and
+199,395,921 aggregate rows from January 2023 through September 2026, excluding
+January 2025. Each selected month has a passing source reconciliation and dataset
+version record. Thirty-nine selected months use the legacy layout without `ptpd`;
+five use the layout with `ptpd`. The local January 2025 file ends with an
+incomplete row and remains unselected pending investigation in issue #27.
+
+The active PostgreSQL volume is bound to the project data directory on /home;
+the original root-filesystem volume was preserved. The backup created before the
+historical batch contains the two initial pilots, not subsequent months. Shared
+deployment and least-privilege analyst accounts remain P19. ENOE ingestion and
+causal analysis have not started.
