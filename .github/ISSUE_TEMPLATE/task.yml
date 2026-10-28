@@ -1,0 +1,27 @@
+name: Implementation task
+description: A bounded, independently verifiable implementation stage
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective and dependencies
+    validations:
+      required: true
+  - type: textarea
+    id: contract
+    attributes:
+      label: Inputs, outputs, and expected files
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria and validation commands
+    validations:
+      required: true
+  - type: textarea
+    id: exclusions
+    attributes:
+      label: Out of scope
+    validations:
+      required: true

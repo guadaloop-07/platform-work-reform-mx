@@ -10,3 +10,6 @@ setup:
 check:
     uv lock --check
     uv run --locked pre-commit run --all-files --hook-stage manual
+
+governance-check:
+    uv run --locked python scripts/check_governance.py

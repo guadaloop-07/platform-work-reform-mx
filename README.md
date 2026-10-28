@@ -20,3 +20,7 @@ only runs when committing.
 Use an issue-linked branch and a pull request for every change. Keep credentials,
 source microdata, database volumes, backups, and generated outputs outside Git.
 Infrastructure is being introduced incrementally; no empirical results exist yet.
+
+See [contribution rules](CONTRIBUTING.md), the
+[implementation roadmap](docs/implementation-plan.md), and
+[implementation progress](docs/implementation-progress.md).
