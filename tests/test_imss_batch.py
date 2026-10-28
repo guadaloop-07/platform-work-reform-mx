@@ -74,3 +74,33 @@ def test_batch_publishes_then_resumes_without_duplication(isolated_database, tmp
         "selected",
         "already_selected",
     ]
+
+
+@pytest.mark.integration
+def test_insufficient_space_stops_before_staging(isolated_database, tmp_path, monkeypatch):
+    source = tmp_path / "source"
+    source.mkdir()
+    path = source / "asg-2025-06-30.csv"
+    path.write_bytes(("|".join(LEGACY) + "\n").encode("cp1252"))
+    manifest = tmp_path / "inventory.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "files": [
+                    {
+                        "name": path.name,
+                        "period": "2025-06-30",
+                        "size_bytes": path.stat().st_size,
+                        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                    }
+                ]
+            }
+        )
+    )
+    progress = tmp_path / "progress.jsonl"
+    monkeypatch.setattr("platform_work_reform.imss_batch.database_free_bytes", lambda: 0)
+    with pytest.raises(ValueError, match="Insufficient free space"):
+        run(isolated_database, source, manifest, date(2025, 6, 1), date(2025, 6, 30), progress)
+    with psycopg.connect(**isolated_database.connection_parameters()) as connection:
+        assert connection.execute("SELECT count(*) FROM staging.imss_load").fetchone() == (0,)
+    assert json.loads(progress.read_text())["status"] == "failed"
