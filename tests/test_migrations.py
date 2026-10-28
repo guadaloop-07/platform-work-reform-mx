@@ -18,7 +18,7 @@ def test_empty_database_migrates_and_upgrade_is_repeatable(isolated_database):
     upgrade(isolated_database)
     with psycopg.connect(**isolated_database.connection_parameters()) as connection:
         assert connection.execute("SELECT version_num FROM meta.alembic_version").fetchone() == (
-            "0002",
+            "0003",
         )
         assert connection.execute("SHOW server_encoding").fetchone() == ("UTF8",)
         names = {
