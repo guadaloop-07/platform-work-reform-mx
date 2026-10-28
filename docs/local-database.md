@@ -25,3 +25,22 @@ volume: changing .env does not change an existing database password or rename it
 
 Shared deployment, individual analyst accounts, and non-loopback access belong to
 P19. This local owner account is for infrastructure development only.
+
+## Migrations and tests
+
+Run `just db-migrate` from the source checkout. Alembic bootstraps its `meta`
+namespace and records revision 0001 in `meta.alembic_version`. Repeated upgrades
+are harmless. Migrations are reviewed source files; do not edit applied revisions
+or downgrade a database containing research data. Offline SQL generation and
+installed-wheel migration execution are not supported by this initial interface.
+
+Revision 0001 creates provenance metadata and empty source namespaces, not survey
+tables or results. Hash identity is unique per source. Dataset provenance must
+refer to a run for the same source file. Terminal run states require a finish
+timestamp. Publication selection and recovery orchestration arrive in P10–P11.
+
+Run `just db-test` with the local service running. Tests create randomly named
+`platform_work_reform_test_*` databases and remove only those databases afterward;
+they do not clear or recreate the configured project database. CI runs the same
+tests against a disposable PostgreSQL service. Failed data transactions must be
+rolled back before a separate audit transaction records the failure.

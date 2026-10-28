@@ -28,5 +28,11 @@ db-down:
 db-status:
     uv run --locked python -m platform_work_reform.db status
 
+db-migrate:
+    uv run --locked python -m platform_work_reform.migrate
+
+db-test:
+    PWR_RUN_DB_TESTS=1 uv run --locked pytest -m integration
+
 governance-check:
     uv run --locked python scripts/check_governance.py
