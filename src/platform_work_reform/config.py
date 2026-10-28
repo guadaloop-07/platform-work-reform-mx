@@ -14,7 +14,7 @@ class Settings:
     password: str = field(repr=False)
     database: str = "platform_work_reform"
     host: str = "127.0.0.1"
-    port: int = 5436
+    port: int = 55432
 
     @classmethod
     def from_env(cls, values: Mapping[str, str] | None = None) -> "Settings":
@@ -34,7 +34,7 @@ class Settings:
         if host != "127.0.0.1":
             raise ValueError("The initial local service requires PWR_POSTGRES_HOST=127.0.0.1")
         try:
-            port = int(values.get("PWR_POSTGRES_PORT", "5436"))
+            port = int(values.get("PWR_POSTGRES_PORT", "55432"))
         except (TypeError, ValueError) as exc:
             raise ValueError("PWR_POSTGRES_PORT must be an integer") from exc
         if not 1 <= port <= 65535:

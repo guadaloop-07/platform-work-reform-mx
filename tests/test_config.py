@@ -7,7 +7,7 @@ def test_project_defaults_and_hidden_password():
     settings = Settings.from_env({"PWR_POSTGRES_PASSWORD": "a-private-test-password"})
     assert settings.database == "platform_work_reform"
     assert settings.host == "127.0.0.1"
-    assert settings.port == 5436
+    assert settings.port == 55432
     assert "a-private-test-password" not in repr(settings)
     assert settings.connection_parameters()["dbname"] == settings.database
 

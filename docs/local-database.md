@@ -1,7 +1,7 @@
 # Local PostgreSQL service
 
 The service is PostgreSQL 17, pinned by image digest, in one project-specific
-Compose service. The default port is 5436 on 127.0.0.1. Originals on external disks
+Compose service. The default port is 55432 on 127.0.0.1. Originals on external disks
 are never mounted into the database container. Source ingestion will use COPY
 FROM STDIN through the client.
 
@@ -12,6 +12,9 @@ just db-config
 just db-up
 just db-status
 ```
+
+Existing installations should update `PWR_POSTGRES_PORT` in their private `.env`
+and run `just db-up` to apply the new port to the existing persistent volume.
 
 Use only PWR_POSTGRES_* variables; unrelated DATABASE_URL or PG* values are not
 project configuration. Do not print `docker compose config` without `--quiet`:
