@@ -17,6 +17,6 @@ and backup artifacts are excluded from Git. A recovery validation database named
 platform_work_reform_restore_initial_validation was restored successfully and
 retained for inspection; it is not the active project database.
 
-The next scoped implementation is P06 (local source inventory). P06–P20 and causal
-analysis have not started. Shared deployment and least-privilege analyst accounts
+P06 adds local source inventory and hashes. P07–P20 and causal analysis have not
+started. Shared deployment and least-privilege analyst accounts
 remain P19; the present service is local infrastructure only.
