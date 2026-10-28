@@ -218,3 +218,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Project data and local infrastructure
+/.codebase-memory/
+/.env.*
+!/.env.example
+/data/
+/backups/
+/artifacts/
+*.dump
+*.sqlite
+*.sqlite-journal
