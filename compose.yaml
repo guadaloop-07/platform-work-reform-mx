@@ -10,7 +10,7 @@ services:
     ports:
       - "127.0.0.1:${PWR_POSTGRES_PORT:-55432}:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ${PWR_POSTGRES_VOLUME:-pgdata}:/var/lib/postgresql/data
     healthcheck:
       test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
       interval: 2s
@@ -20,3 +20,9 @@ services:
     stop_grace_period: 30s
 volumes:
   pgdata:
+  pgdata_home:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWR_POSTGRES_DATA_DIR:-/nonexistent-platform-work-data}
