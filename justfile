@@ -1,4 +1,5 @@
 set shell := ["bash", "-euo", "pipefail", "-c"]
+set positional-arguments
 
 default:
     @just --list
@@ -33,6 +34,12 @@ db-migrate:
 
 db-test:
     PWR_RUN_DB_TESTS=1 uv run --locked pytest -m integration
+
+db-backup:
+    uv run --locked python -m platform_work_reform.backup backup
+
+db-restore archive target:
+    uv run --locked python -m platform_work_reform.backup restore --archive "$1" --target "$2"
 
 governance-check:
     uv run --locked python scripts/check_governance.py
