@@ -26,6 +26,27 @@ Do not run `docker compose down -v` or volume pruning against project data.
 The volume is not a backup. Initialization credentials only apply to an empty
 volume: changing .env does not change an existing database password or rename it.
 
+## Optional storage on a larger filesystem
+
+The default `PWR_POSTGRES_VOLUME=pgdata` continues to use the original named
+volume. To place a new volume on a larger local filesystem, create an empty
+directory, set `PWR_POSTGRES_VOLUME=pgdata_home` and set the absolute directory
+path in `PWR_POSTGRES_DATA_DIR`. The local Docker volume driver bind-mounts that
+directory. Ensure Docker can access the path and that the filesystem has space.
+
+Existing databases must be copied consistently before switching. Create and verify
+a backup, stop PostgreSQL cleanly, and copy the entire stopped data directory to
+a new empty destination preserving owners and permissions. Preserve the original
+named volume. After switching configuration, verify the PostgreSQL system ID,
+migration revision, selected periods and aggregate checks. Never initialize a new
+empty directory and mistake it for the old database. The original volume remains
+available for rollback until independently verified and backed up.
+
+Docker's `pgdata_home` is a named volume with fixed driver options after creation;
+changing the directory setting does not migrate an existing named volume. Inspect
+the volume mountpoint before a later relocation. Do not prune or remove volumes as
+part of normal maintenance.
+
 Shared deployment, individual analyst accounts, and non-loopback access belong to
 P19. This local owner account is for infrastructure development only.
 
