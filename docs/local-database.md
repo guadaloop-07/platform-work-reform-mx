@@ -44,3 +44,5 @@ Run `just db-test` with the local service running. Tests create randomly named
 they do not clear or recreate the configured project database. CI runs the same
 tests against a disposable PostgreSQL service. Failed data transactions must be
 rolled back before a separate audit transaction records the failure.
+
+See [verified backup and restore](backup-and-restore.md) for recovery commands.

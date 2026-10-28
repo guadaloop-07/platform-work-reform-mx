@@ -27,3 +27,5 @@ See [contribution rules](CONTRIBUTING.md), the
 
 Follow the [local database guide](docs/local-database.md) to configure the isolated
 PostgreSQL service. Never reuse another project's credentials or database.
+After migration, follow the [backup and restore guide](docs/backup-and-restore.md)
+to create and verify independent recovery copies.

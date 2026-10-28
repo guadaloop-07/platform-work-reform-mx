@@ -54,6 +54,8 @@ jobs:
           enable-cache: true
       - run: uv sync --locked
       - run: uv run --locked pytest -m integration
+        env:
+          PWR_POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
   ci:
     if: always()
     needs: [quality, database]
