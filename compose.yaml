@@ -1,0 +1,22 @@
+name: platform-work-reform-mx
+services:
+  postgres:
+    image: postgres:17@sha256:31ba9c94a03ada9988f2bb493a22a75eef3a185884533e5cdbcd498ea835b08f
+    environment:
+      POSTGRES_USER: ${PWR_POSTGRES_USER:-platform_owner}
+      POSTGRES_DB: ${PWR_POSTGRES_DB:-platform_work_reform}
+      POSTGRES_PASSWORD: ${PWR_POSTGRES_PASSWORD:?Set PWR_POSTGRES_PASSWORD in .env}
+      POSTGRES_INITDB_ARGS: --encoding=UTF8 --auth-host=scram-sha-256
+    ports:
+      - "127.0.0.1:${PWR_POSTGRES_PORT:-5436}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 5s
+    stop_grace_period: 30s
+volumes:
+  pgdata:

@@ -24,3 +24,6 @@ Infrastructure is being introduced incrementally; no empirical results exist yet
 See [contribution rules](CONTRIBUTING.md), the
 [implementation roadmap](docs/implementation-plan.md), and
 [implementation progress](docs/implementation-progress.md).
+
+Follow the [local database guide](docs/local-database.md) to configure the isolated
+PostgreSQL service. Never reuse another project's credentials or database.
