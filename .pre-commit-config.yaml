@@ -18,6 +18,11 @@ repos:
         stages: [pre-commit]
   - repo: local
     hooks:
+      - id: strip-notebook-outputs
+        name: Strip notebook outputs
+        entry: uv run --locked nbstripout
+        language: system
+        types: [jupyter]
       - id: ruff-check
         name: Ruff lint
         entry: uv run --locked ruff check --fix
