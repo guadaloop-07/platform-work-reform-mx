@@ -11,7 +11,7 @@
 Main protection was enabled before the first PR was merged. The ci check was
 observed and made mandatory before merging PR #6. No empirical data is loaded.
 
-P01–P05 are implemented. PostgreSQL listens on loopback port 5436 and contains
+P01–P05 are implemented. PostgreSQL listens on loopback port 55432 and contains
 revision 0001 with empty research namespaces. The private .env, persistent volume,
 and backup artifacts are excluded from Git. A recovery validation database named
 platform_work_reform_restore_initial_validation was restored successfully and
