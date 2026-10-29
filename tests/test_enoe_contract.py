@@ -10,7 +10,7 @@ from platform_work_reform.enoe_contract import (
 
 
 def test_only_reviewed_period_and_tables_are_supported():
-    assert key_fields(2025, 3, "SDEM")[-1] == "N_REN"
+    assert key_fields(2025, 3, "SDEM")[-1] == "n_ren"
     for period, table in [((2025, 2), "SDEM"), ((2025, 3), "UNKNOWN")]:
         with pytest.raises(ContractError):
             key_fields(*period, table)
@@ -32,7 +32,7 @@ def test_keys_preserve_strings_and_reject_invalid_or_duplicate_keys():
     with pytest.raises(ContractError, match="Duplicate"):
         unique_keys(2025, 3, "SDEM", [row, row])
     with pytest.raises(ContractError, match="nonblank"):
-        unique_keys(2025, 3, "SDEM", [{**row, "N_REN": " "}])
+        unique_keys(2025, 3, "SDEM", [{**row, "n_ren": " "}])
     with pytest.raises(ContractError, match="Missing"):
         unique_keys(2025, 3, "SDEM", [{}])
 

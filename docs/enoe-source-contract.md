@@ -5,8 +5,8 @@ files, not a complete CSV schema or authorization to ingest them. INEGI's
 [Estructura de la base de datos](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/enoe_325_fd_c_bas_amp.pdf)
 describes five tables and the relationship fields. It specifies `ENT` through
 2025 Q2 and `CVE_ENT` starting in 2025 Q3; the 2025 Q3 dictionaries also use
-`CVE_ENT`. This contract uses the latter spelling and does not silently rename
-fields in source files.
+`CVE_ENT`. The official CSV header uses lowercase names (`cve_ent`, etc.);
+the code uses those exact names and does not silently rename source fields.
 
 | Table | Grain | Within-quarter key |
 |---|---|---|

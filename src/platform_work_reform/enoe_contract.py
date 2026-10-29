@@ -11,9 +11,9 @@ class ContractError(ValueError):
     """An input is outside the documented contract or has invalid keys."""
 
 
-DWELLING = ("TIPO", "MES_CAL", "CD_A", "CVE_ENT", "CON", "V_SEL")
-HOUSEHOLD = (*DWELLING, "N_HOG", "H_MUD")
-PERSON = (*HOUSEHOLD, "N_REN")
+DWELLING = ("tipo", "mes_cal", "cd_a", "cve_ent", "con", "v_sel")
+HOUSEHOLD = (*DWELLING, "n_hog", "h_mud")
+PERSON = (*HOUSEHOLD, "n_ren")
 KEYS = {"VIV": DWELLING, "HOG": HOUSEHOLD, "SDEM": PERSON, "COE1": PERSON, "COE2": PERSON}
 
 
