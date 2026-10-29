@@ -25,6 +25,10 @@ decoding fails for SDEM but succeeds for the other four data files; CP1252
 decodes all five. This is evidence, not proof of the intended source encoding.
 The bundled dictionaries decode as UTF-8. Review the ambiguous text and source
 metadata before selecting a decoding contract; never replace invalid bytes.
+The only non-ASCII bytes in SDEM occur in `cs_p21_des` (376 rows) and
+`cs_p23_des` (84 rows); under CP1252 the non-ASCII characters are U+00CB and
+U+00D0. Their interpretation is not established by decoding alone. Do not
+publish normalized text or claim that CP1252 is the authoritative encoding.
 
 | Relationship | Child rows with parent | Child rows without parent | Parent rows without child |
 |---|---:|---:|---:|
@@ -34,13 +38,27 @@ metadata before selecting a decoding contract; never replace invalid bytes.
 | SDEM → COE2 | 346,524 | 0 | 75,782 |
 | COE1 → COE2 | 346,524 | 0 | 0 |
 
-The 75,782 SDEM records without COE1 include 65,113 with `eda` below 12.
-The remaining 10,669 require interpretation against eligibility, residence,
-and interview-result codes: 9,856 have `r_def=0`, `c_res=2`; 32 have
-`r_def=0`, `c_res=1`; one has `r_def=0`, `c_res=3`; and 780 have `r_def=15`.
-The 25,922 HOG records without SDEM have nonzero `r_def` codes; do not infer
-that every absence is an error or that all are explained until the official
-code definitions and relevant universes are reconciled.
+The 75,782 SDEM records without COE1 include 65,146 classified as under 12,
+including 33 whose `eda=99` indicates an unspecified age in that age group.
+The remaining 10,636 comprise 9,856 with `r_def=0`, `c_res=2` (definitively
+absent) and 780 with `r_def=15` (suspended interview). The published
+[2025 structure](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/enoe_325_fd_c_bas_amp.pdf)
+defines `eda=98` as unspecified age for people 12 and older; neither 98 nor 99
+should be interpreted as an actual age. These categories explain the observed
+pattern, but should not be used to impute questionnaire responses.
+
+The 25,922 HOG records without SDEM have nonzero `r_def` codes associated with
+non-interviews. The bundled `r_def` catalog omits values 17 and 18, although
+the 2025 structure documents them as telephone-specific non-interview codes;
+588 affected households use one of these values. Do not enforce the incomplete
+catalog as an exhaustive allowlist.
+
+To reproduce the hash, layout, key, and unmatched-category audit with the
+unchanged archive at the path above, run:
+
+```bash
+python scripts/audit_enoe_2025q3.py
+```
 
 This audit establishes header and key behavior for this archive only. It does
 not validate every value, type, weight, survey universe or statistical result,
