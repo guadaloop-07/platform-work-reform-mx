@@ -4,6 +4,7 @@ from platform_work_reform.enoe_contract import (
     ContractError,
     compare_keys,
     key_fields,
+    preserve_sdem_text_bytes,
     unique_keys,
     validate_header,
 )
@@ -44,3 +45,13 @@ def test_comparison_exposes_both_unmatched_sides():
         result.unmatched_children,
         result.parents_without_children,
     ) == (2, 1, 1)
+
+
+def test_sdem_text_preserves_bytes_without_deciding_their_meaning():
+    original = b"text\xcb\xd0"
+    row = {"cs_p21_des": original.decode("latin-1"), "cs_p23_des": ""}
+    assert preserve_sdem_text_bytes(row) == {"cs_p21_des": original, "cs_p23_des": b""}
+    with pytest.raises(ContractError, match="Missing"):
+        preserve_sdem_text_bytes({"cs_p21_des": ""})
+    with pytest.raises(ContractError, match="byte-preserving"):
+        preserve_sdem_text_bytes({"cs_p21_des": "\u20ac", "cs_p23_des": ""})

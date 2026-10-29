@@ -44,16 +44,30 @@ design variables, and select the appropriate weight and survey design for each
 estimate. Do not sum weights across joins that multiply persons. Municipal
 identifiers do not establish municipal representativeness.
 
+For 2025 Q3, `cs_p21_des` and `cs_p23_des` describe other reasons for a
+household member's departure or arrival. Their source bytes include values
+whose text encoding remains unresolved. For the pilot, retain the complete
+original archive and CSV bytes and store the two logical CSV field values as
+bytes, linked to their source row. A strict Latin-1 parse is a reversible byte
+mapping, not a declaration of the text encoding; recover field bytes without
+publishing decoded text or replacing characters. CSV quoting and delimiters
+are preserved by the original file, not by the extracted field values. Empty
+bytes remain empty, without interpreting the survey's missing-value meaning.
+Any later text interpretation requires separate evidence and provenance.
+
 `enoe_contract` checks required key names and distinct, nonblank string keys;
 it can count joins after callers verify the table relationship and period. It
+also recovers the two field values from a byte-preserving Latin-1 parse. It
 does not validate complete headers, data types, source encoding, values,
 eligibility or statistical outputs. It fails closed for unreviewed periods.
 The checks are synthetic and do not establish that an official release passes.
 
-Before P15 ingestion, obtain the official archives and dictionaries, record
-origin, retrieval date, archive/member hashes and release revisions, inspect
-actual headers, encoding and row counts, reconcile the keys and exceptions,
-and define complete version-specific layouts and transactional load rules.
+Before P15 ingestion, record origin, retrieval date, archive/member hashes and
+release revisions; validate actual headers, row counts, keys and exceptions;
+and define complete version-specific layouts and transactional load rules. The
+initial 2025 Q3 archive and dictionaries have been inspected as documented in
+`enoe-2025q3-source-audit.md`; this does not establish contracts for other
+quarters.
 INEGI can revise releases, so a new hash is a new version. P16 must document
 population, weights, missingness and the resulting row counts. Within-quarter
 keys do not establish cross-quarter person identity, nor any individual linkage

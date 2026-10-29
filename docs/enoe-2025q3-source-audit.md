@@ -24,11 +24,13 @@ all documented key fields were present, nonblank and unique. Strict UTF-8
 decoding fails for SDEM but succeeds for the other four data files; CP1252
 decodes all five. This is evidence, not proof of the intended source encoding.
 The bundled dictionaries decode as UTF-8. Review the ambiguous text and source
-metadata before selecting a decoding contract; never replace invalid bytes.
+metadata before selecting a text interpretation; never replace invalid bytes.
 The only non-ASCII bytes in SDEM occur in `cs_p21_des` (376 rows) and
 `cs_p23_des` (84 rows); under CP1252 the non-ASCII characters are U+00CB and
 U+00D0. Their interpretation is not established by decoding alone. Do not
 publish normalized text or claim that CP1252 is the authoritative encoding.
+The source contract retains those two logical field values as bytes using a
+reversible Latin-1 parse, while preserving the original archive and CSV bytes.
 
 | Relationship | Child rows with parent | Child rows without parent | Parent rows without child |
 |---|---:|---:|---:|

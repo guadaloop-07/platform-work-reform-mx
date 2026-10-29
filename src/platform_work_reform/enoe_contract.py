@@ -15,6 +15,28 @@ DWELLING = ("tipo", "mes_cal", "cd_a", "cve_ent", "con", "v_sel")
 HOUSEHOLD = (*DWELLING, "n_hog", "h_mud")
 PERSON = (*HOUSEHOLD, "n_ren")
 KEYS = {"VIV": DWELLING, "HOG": HOUSEHOLD, "SDEM": PERSON, "COE1": PERSON, "COE2": PERSON}
+RAW_TEXT_FIELDS = ("cs_p21_des", "cs_p23_des")
+
+
+def preserve_sdem_text_bytes(row: Mapping[str, str]) -> dict[str, bytes]:
+    """Recover logical CSV field bytes from a strict Latin-1 byte-preserving parse.
+
+    Latin-1 is only a reversible byte mapping here, not a claim about the
+    source encoding. The complete original CSV is retained separately.
+    """
+    result = {}
+    for field in RAW_TEXT_FIELDS:
+        try:
+            value = row[field]
+        except KeyError as exc:
+            raise ContractError(f"Missing source text field: {field}") from exc
+        if not isinstance(value, str):
+            raise ContractError(f"Source text field must be a string: {field}")
+        try:
+            result[field] = value.encode("latin-1", errors="strict")
+        except UnicodeEncodeError as exc:
+            raise ContractError(f"Source text field is not byte-preserving: {field}") from exc
+    return result
 
 
 def key_fields(year: int, quarter: int, table: str) -> tuple[str, ...]:
