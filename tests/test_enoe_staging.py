@@ -9,6 +9,7 @@ import psycopg
 import pytest
 
 from platform_work_reform import enoe_staging
+from platform_work_reform.enoe_contract import HEADER_SIGNATURES
 
 pytestmark = pytest.mark.integration
 
@@ -25,6 +26,11 @@ def make_archive(tmp_path, monkeypatch, *, bad=None):
     with zipfile.ZipFile(archive, "w") as z:
         for original in enoe_staging.CONTRACTS:
             header = [*original.key, "text"]
+            monkeypatch.setitem(
+                HEADER_SIGNATURES,
+                original.name,
+                (len(header), hashlib.sha256("\n".join(header).encode("ascii")).hexdigest()),
+            )
             row = ["01"] * len(original.key) + ["raw\xcb"]
             if bad == "orphan" and original.name == "COE2":
                 row[0] = "02"
@@ -85,3 +91,6 @@ def test_official_pilot_in_isolated_database(isolated_database):
     archive = os.environ["PWR_ENOE_PILOT_ARCHIVE"]
     counts = enoe_staging.load(isolated_database, Path(archive))
     assert counts == {contract.name: contract.rows for contract in enoe_staging.CONTRACTS}
+    with psycopg.connect(**isolated_database.connection_parameters()) as conn:
+        size = conn.execute("SELECT pg_database_size(current_database())").fetchone()[0]
+    print(f"Isolated pilot database size: {size} bytes")

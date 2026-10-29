@@ -12,6 +12,14 @@ from pathlib import Path
 import psycopg
 
 from platform_work_reform.config import Settings
+from platform_work_reform.enoe_contract import (
+    DWELLING,
+    HOUSEHOLD,
+    PERSON,
+    RELATIONSHIPS,
+    key_fields,
+    validate_header,
+)
 
 
 @dataclass(frozen=True)
@@ -23,9 +31,6 @@ class TableContract:
     dictionary_sha256: str
 
 
-DWELLING = ("tipo", "mes_cal", "cd_a", "cve_ent", "con", "v_sel")
-HOUSEHOLD = (*DWELLING, "n_hog", "h_mud")
-PERSON = (*HOUSEHOLD, "n_ren")
 ARCHIVE_SHA256 = "7138b2bfabc740a9805b83b3fd0dae28287fc2aab3781a596a741b8fc7861566"
 CONTRACTS = (
     TableContract(
@@ -143,11 +148,8 @@ def load(settings: Settings, source: Path) -> dict[str, int]:
             ):
                 reader = csv.reader(text, strict=True)
                 header = next(reader)
-                if (
-                    header != expected_header
-                    or len(header) != len(set(header))
-                    or not set(contract.key) <= set(header)
-                ):
+                validate_header(2025, 3, contract.name, header)
+                if header != expected_header or contract.key != key_fields(2025, 3, contract.name):
                     raise ValueError(f"Unexpected {contract.name} header")
                 indexes = [header.index(field) for field in contract.key]
                 conn.execute(
@@ -187,13 +189,8 @@ def load(settings: Settings, source: Path) -> dict[str, int]:
                 if count != contract.rows:
                     raise ValueError(f"Unexpected {contract.name} row count")
                 counts[contract.name] = count
-        for parent, child, width in (
-            ("VIV", "HOG", 6),
-            ("HOG", "SDEM", 8),
-            ("SDEM", "COE1", 9),
-            ("SDEM", "COE2", 9),
-            ("COE1", "COE2", 9),
-        ):
+        for parent, child in sorted(RELATIONSHIPS):
+            width = len(key_fields(2025, 3, parent))
             orphan_count = conn.execute(
                 """SELECT count(*) FROM staging.enoe_row c
                 WHERE c.run_id=%s AND c.table_name=%s AND NOT EXISTS
