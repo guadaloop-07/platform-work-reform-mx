@@ -1,7 +1,11 @@
+from hashlib import sha256
+
 import pytest
 
 from platform_work_reform.enoe_contract import (
+    HEADER_SIGNATURES,
     ContractError,
+    KeySet,
     compare_keys,
     key_fields,
     preserve_sdem_text_bytes,
@@ -17,9 +21,17 @@ def test_only_reviewed_period_and_tables_are_supported():
             key_fields(*period, table)
 
 
-def test_header_checks_keys_and_rejects_duplicate_names():
+def test_header_checks_complete_ordered_layout(monkeypatch):
     fields = key_fields(2025, 3, "VIV")
-    validate_header(2025, 3, "VIV", [*fields, "OTHER"])
+    header = [*fields, "other"]
+    monkeypatch.setitem(
+        HEADER_SIGNATURES, "VIV", (len(header), sha256("\n".join(header).encode()).hexdigest())
+    )
+    validate_header(2025, 3, "VIV", header)
+    with pytest.raises(ContractError, match="Unknown"):
+        validate_header(2025, 3, "VIV", [*fields, "other", "extra"])
+    with pytest.raises(ContractError, match="Unknown"):
+        validate_header(2025, 3, "VIV", [*fields, "changed"])
     with pytest.raises(ContractError, match="Missing key"):
         validate_header(2025, 3, "VIV", fields[:-1])
     with pytest.raises(ContractError, match="Duplicate"):
@@ -39,12 +51,29 @@ def test_keys_preserve_strings_and_reject_invalid_or_duplicate_keys():
 
 
 def test_comparison_exposes_both_unmatched_sides():
-    result = compare_keys({("a",), ("b",)}, {("a", "1"), ("a", "2"), ("c", "1")})
+    parent_key = ("a",) * 6
+    other_key = ("b",) * 6
+    parent = KeySet(2025, 3, "release-a", "VIV", {parent_key, other_key})
+    orphan_key = ("c",) * 6
+    child = KeySet(
+        2025,
+        3,
+        "release-a",
+        "HOG",
+        {(*parent_key, "1", "1"), (*parent_key, "2", "1"), (*orphan_key, "1", "1")},
+    )
+    result = compare_keys(parent, child)
     assert (
         result.matched_children,
         result.unmatched_children,
         result.parents_without_children,
     ) == (2, 1, 1)
+    with pytest.raises(ContractError, match="periods or releases"):
+        compare_keys(parent, KeySet(2025, 3, "release-b", "HOG", child.keys))
+    with pytest.raises(ContractError, match="Unsupported"):
+        compare_keys(parent, KeySet(2025, 3, "release-a", "COE1", set()))
+    with pytest.raises(ContractError, match="width"):
+        compare_keys(parent, KeySet(2025, 3, "release-a", "HOG", {("wrong",)}))
 
 
 def test_sdem_text_preserves_bytes_without_deciding_their_meaning():

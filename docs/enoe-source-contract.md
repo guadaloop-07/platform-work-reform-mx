@@ -1,7 +1,7 @@
 # ENOE source and join contract: 2025 third-quarter pilot
 
-This is a preliminary key contract for the national 2025 third-quarter ENOE
-files, not a complete CSV schema or authorization to ingest them. INEGI's
+This contract covers source-faithful staging of the reviewed national ENOE
+2025 Q3 release. It does not authorize publication of analytical estimates. INEGI's
 [Estructura de la base de datos](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/enoe_325_fd_c_bas_amp.pdf)
 describes five tables and the relationship fields. It specifies `ENT` through
 2025 Q2 and `CVE_ENT` starting in 2025 Q3; the 2025 Q3 dictionaries also use
@@ -55,21 +55,33 @@ are preserved by the original file, not by the extracted field values. Empty
 bytes remain empty, without interpreting the survey's missing-value meaning.
 Any later text interpretation requires separate evidence and provenance.
 
-`enoe_contract` checks required key names and distinct, nonblank string keys;
-it can count joins after callers verify the table relationship and period. It
-also recovers the two field values from a byte-preserving Latin-1 parse. It
-does not validate complete headers, data types, source encoding, values,
-eligibility or statistical outputs. It fails closed for unreviewed periods.
-The checks are synthetic and do not establish that an official release passes.
+`enoe_contract` checks exact ordered headers using SHA-256 of the ASCII field
+names joined by newline, required key names and distinct, nonblank keys. Join
+counts require the same period and release and an explicitly supported table
+relationship. It also recovers the two text values from a byte-preserving
+Latin-1 parse. It does not interpret data types, missing codes, survey universe
+or statistical outputs. Unknown periods and headers fail closed.
 
-Before P15 ingestion, record origin, retrieval date, archive/member hashes and
-release revisions; validate actual headers, row counts, keys and exceptions;
-and define complete version-specific layouts and transactional load rules. The
+For P15 ingestion, record origin, retrieval date, archive/member hashes and
+release revisions; enforce actual headers, row counts, keys and exceptions;
+and use a transactional load preserving all raw fields. The
 initial 2025 Q3 archive and dictionaries have been inspected as documented in
 `enoe-2025q3-source-audit.md`; this does not establish contracts for other
 quarters.
-INEGI can revise releases, so a new hash is a new version. P16 must document
-population, weights, missingness and the resulting row counts. Within-quarter
+INEGI can revise releases, so a new hash is a new version requiring review.
+
+## Requirements before analysis
+
+For the precoded variables, the 2025 structure specifies `r_def=0`,
+`c_res` in `1` or `3`, and the 15-and-older age universe, including the
+unspecified-adult code `eda=98`. The value `eda=99` means an unspecified age
+under 12, and `eda=97` represents 97 or more; neither is a literal age.
+Apply the official variable-specific universe and skip rules, not this criterion
+indiscriminately to all questions. Use quarterly `fac_tri` for appropriate
+quarterly estimates and retain design variables; justify the population and
+survey design for each estimate. Document coded missingness, nonresponse,
+weight use and reconciliation with published aggregates before releasing
+person-quarter results. P16 must document the resulting row counts. Within-quarter
 keys do not establish cross-quarter person identity, nor any individual linkage
 to aggregate IMSS records. Platform-worker identification and causal design are
 separate feasibility work.
