@@ -2,11 +2,11 @@
 
 This is a preliminary key contract for the national 2025 third-quarter ENOE
 files, not a complete CSV schema or authorization to ingest them. INEGI's
-[Estructura de la base de datos](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/enoe_123_fd_c_bas_amp.pdf)
-describes five tables and the relationship fields. Its diagram uses `ENT`;
-the [2025 SDEMT325 dictionary](https://www.inegi.org.mx/rnm/index.php/catalog/1121/data-dictionary/F47)
-and the other 2025 Q3 dictionaries use `CVE_ENT`. This contract uses the latter
-spelling; it does not silently rename or equate fields in source files.
+[Estructura de la base de datos](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/enoe_325_fd_c_bas_amp.pdf)
+describes five tables and the relationship fields. It specifies `ENT` through
+2025 Q2 and `CVE_ENT` starting in 2025 Q3; the 2025 Q3 dictionaries also use
+`CVE_ENT`. This contract uses the latter spelling and does not silently rename
+fields in source files.
 
 | Table | Grain | Within-quarter key |
 |---|---|---|
