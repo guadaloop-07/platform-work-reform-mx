@@ -102,11 +102,18 @@ def load(settings: Settings, source: Path) -> dict[str, int]:
         if len(names) != len(set(names)):
             raise ValueError("Duplicate archive member")
         source_id = conn.execute(
-            """INSERT INTO meta.source_file(source_name, original_name, sha256, byte_size, encoding)
-               VALUES ('enoe', %s, %s, %s, 'binary-field-values')
+            """INSERT INTO meta.source_file
+               (source_name, original_name, sha256, byte_size, source_uri, encoding)
+               VALUES ('enoe', %s, %s, %s, %s, 'binary-field-values')
                ON CONFLICT (source_name, sha256) DO UPDATE SET sha256=EXCLUDED.sha256
                RETURNING id""",
-            (source.name, ARCHIVE_SHA256, source.stat().st_size),
+            (
+                source.name,
+                ARCHIVE_SHA256,
+                source.stat().st_size,
+                "https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/datosabiertos/2025/"
+                "conjunto_de_datos_enoe_2025_3t_csv.zip",
+            ),
         ).fetchone()[0]
         existing = conn.execute(
             "SELECT run_id FROM staging.enoe_load WHERE source_file_id=%s AND reference_period=%s",
