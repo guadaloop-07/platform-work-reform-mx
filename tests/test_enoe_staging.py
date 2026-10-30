@@ -98,4 +98,14 @@ def test_official_pilot_in_isolated_database(isolated_database):
                FROM enoe.person_quarter_pilot"""
         ).fetchone()
         assert counts == (422306, 346524, 346524)
+        prepared = conn.execute(
+            """SELECT count(*), count(*) FILTER (WHERE preparation_status='eligible'),
+                      count(*) FILTER (WHERE preparation_status='invalid'),
+                      sum(quarterly_weight),
+                      sum(quarterly_weight) FILTER (WHERE clase1='1'),
+                      sum(quarterly_weight) FILTER (WHERE clase2='1'),
+                      sum(quarterly_weight) FILTER (WHERE clase2='2')
+               FROM enoe.prepared_person_2025q3_v1"""
+        ).fetchone()
+        assert prepared == (422306, 325108, 0, 103068355, 61303255, 59533449, 1769806)
     print(f"Isolated pilot database size: {size} bytes")
