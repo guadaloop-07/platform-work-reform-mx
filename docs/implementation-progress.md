@@ -36,8 +36,8 @@ five use the layout with `ptpd`. The local January 2025 file ends with an
 incomplete row and remains unselected pending investigation in issue #27.
 
 The active PostgreSQL volume is bound to the project data directory on /home;
-the original root-filesystem volume was preserved. A later local backup dated
-2026-10-29 records revision 0004 and 44 dataset versions; independent storage
-and a restore of that specific backup have not been verified here. Shared
+the original root-filesystem volume was preserved. The 2026-10-29 backup was
+independently stored and restored on 2026-10-30; see `backup-and-restore.md` for
+the verified scope and remaining limitations. Shared
 deployment and least-privilege analyst accounts remain P19. ENOE analytical
 preparation and causal analysis remain subsequent work.
