@@ -16,7 +16,7 @@
 | P12–P13 | 44 months staged, independently reconciled and selected; one exception | Partial |
 | P14 | PR #31; reviewed ENOE 2025 Q3 source and join contract | Pilot merged |
 | P15 | PR #33; transactional ENOE pilot loader and isolated real-data test | Pilot merged |
-| P16 | Person-quarter pilot view and national 2025 Q3 point-estimate reconciliation; no survey-design precision | In progress |
+| P16 | Prepared 2025 Q3 person-quarter pilot and national point-estimate reconciliation; no survey-design precision | In progress |
 
 Main protection was enabled before the first PR was merged. The ci check was
 observed and made mandatory before merging PR #6.
