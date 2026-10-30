@@ -93,4 +93,9 @@ def test_official_pilot_in_isolated_database(isolated_database):
     assert counts == {contract.name: contract.rows for contract in enoe_staging.CONTRACTS}
     with psycopg.connect(**isolated_database.connection_parameters()) as conn:
         size = conn.execute("SELECT pg_database_size(current_database())").fetchone()[0]
+        counts = conn.execute(
+            """SELECT count(*), count(coe1_row_number), count(coe2_row_number)
+               FROM enoe.person_quarter_pilot"""
+        ).fetchone()
+        assert counts == (422306, 346524, 346524)
     print(f"Isolated pilot database size: {size} bytes")

@@ -14,11 +14,15 @@
 | P10 | PR #22; reconciled monthly selection and analysis view | Merged |
 | P11 | PR #26; resumable batch with storage guard | Merged |
 | P12–P13 | 44 months staged, independently reconciled and selected; one exception | Partial |
+| P14 | PR #31; reviewed ENOE 2025 Q3 source and join contract | Pilot merged |
+| P15 | PR #33; transactional ENOE pilot loader and isolated real-data test | Pilot merged |
+| P16 | Source-faithful person-quarter pilot view; no analytical population or estimates | In progress |
 
 Main protection was enabled before the first PR was merged. The ci check was
 observed and made mandatory before merging PR #6.
 
-PostgreSQL listens on loopback port 55432 and contains migration revision 0003.
+PostgreSQL listens on loopback port 55432. On 2026-10-30 the active database
+contained revision 0004 and the five ENOE pilot tables with the audited counts.
 The private .env, persistent volume, and backup artifacts are excluded from Git.
 A recovery validation database named
 platform_work_reform_restore_initial_validation was restored successfully and
@@ -32,7 +36,8 @@ five use the layout with `ptpd`. The local January 2025 file ends with an
 incomplete row and remains unselected pending investigation in issue #27.
 
 The active PostgreSQL volume is bound to the project data directory on /home;
-the original root-filesystem volume was preserved. The backup created before the
-historical batch contains the two initial pilots, not subsequent months. Shared
-deployment and least-privilege analyst accounts remain P19. ENOE ingestion and
-causal analysis have not started.
+the original root-filesystem volume was preserved. A later local backup dated
+2026-10-29 records revision 0004 and 44 dataset versions; independent storage
+and a restore of that specific backup have not been verified here. Shared
+deployment and least-privilege analyst accounts remain P19. ENOE analytical
+preparation and causal analysis remain subsequent work.
