@@ -27,6 +27,7 @@ class Audit:
     counts: Counter = field(default_factory=Counter)
     weights: Counter = field(default_factory=Counter)
     missing_coe: Counter = field(default_factory=Counter)
+    completed_code: str = "0"
 
     def add(self, values: dict[str, str], coe1: bool, coe2: bool) -> None:
         age_text, result, residence = (values[x] for x in ("eda", "r_def", "c_res"))
@@ -35,9 +36,14 @@ class Audit:
         age = int(age_text) if age_text else None
         if age is not None and not 0 <= age <= 99:
             raise ValueError("Invalid age code")
-        if result == "0" and residence in ("1", "3") and age is None:
+        if result == self.completed_code and residence in ("1", "3") and age is None:
             raise ValueError("Missing age for completed resident interview")
-        eligible = result == "0" and residence in ("1", "3") and age is not None and 15 <= age <= 98
+        eligible = (
+            result == self.completed_code
+            and residence in ("1", "3")
+            and age is not None
+            and 15 <= age <= 98
+        )
         self.counts["sdem"] += 1
         self.counts["coe1_matched"] += coe1
         self.counts["coe2_matched"] += coe2

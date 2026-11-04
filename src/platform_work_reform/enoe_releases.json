@@ -1,0 +1,374 @@
+{
+  "2025q2": {
+    "year": 2025,
+    "quarter": 2,
+    "archive_sha256": "9530a017e3defb0658418b73a47a6039eeb54abf11342fa10693374736515127",
+    "tables": {
+      "VIV": {
+        "rows": 150442,
+        "member_sha256": "dc6928c71271b6a05b941d63aad240bbd7b3810b13543a9cfa66fe03f9ca7401",
+        "dictionary_sha256": "1e42a036be4e8cb32860e0144ef47d93ff45c99ea528e9c1e4d3a90ff686c252",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "ent",
+          "con",
+          "v_sel"
+        ],
+        "nonascii_fields": {}
+      },
+      "HOG": {
+        "rows": 151468,
+        "member_sha256": "b1d92873323d45768fc05ef4f5adb434932b50a122251fd66854bbea32150c15",
+        "dictionary_sha256": "826c5f292497a63a3f365f4eca985c61a38f156ac1c18897914a5f7dda3f200b",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "ent",
+          "con",
+          "v_sel",
+          "n_hog",
+          "h_mud"
+        ],
+        "nonascii_fields": {}
+      },
+      "SDEM": {
+        "rows": 423744,
+        "member_sha256": "c9f1a2adf14b388be7d1a68ef57d30fd92356d36f522cc7e3ac32de6ab5a48d8",
+        "dictionary_sha256": "ce67f37024a4a60767b0b140ad249e9eca98bf900459117cf82f63c3649d251b",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "ent",
+          "con",
+          "v_sel",
+          "n_hog",
+          "h_mud",
+          "n_ren"
+        ],
+        "nonascii_fields": {
+          "cs_p21_des": 352,
+          "cs_p23_des": 61
+        }
+      },
+      "COE1": {
+        "rows": 346404,
+        "member_sha256": "6d2334cdf3df34fe7a81b6db3ca034f4ee5ccbc24536f20c9bbfc535377fd450",
+        "dictionary_sha256": "69661cfc813ae886310fcc88dddce580486aa9ce292f9e22620088a78831ae5b",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "ent",
+          "con",
+          "v_sel",
+          "n_hog",
+          "h_mud",
+          "n_ren"
+        ],
+        "nonascii_fields": {}
+      },
+      "COE2": {
+        "rows": 346404,
+        "member_sha256": "a8acb180fd7f0276a797494919980c3821d6e298747b0cd1bff8ef7cc63ac23d",
+        "dictionary_sha256": "493cc45db0872bdd80f4cd4139deb1da7c618d427329759bdf4fe22e7b1e0010",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "ent",
+          "con",
+          "v_sel",
+          "n_hog",
+          "h_mud",
+          "n_ren"
+        ],
+        "nonascii_fields": {}
+      }
+    },
+    "header_signatures": {
+      "VIV": [
+        25,
+        "21940e70d986d31cc3c03cf4e9586ece8caa4f020e6063421551f62b09a7ef5f"
+      ],
+      "HOG": [
+        37,
+        "4270b5067e4c3f69bfbdcc86d81e995a5303f96ce4b475a18dc6b1bb3a6dcdf3"
+      ],
+      "SDEM": [
+        114,
+        "f169891401e64a0c2fc9c21f44b8772165ad71787ec521d99f57143465905535"
+      ],
+      "COE1": [
+        172,
+        "574ec188b9f3003706c71459e2151c08e5d21ce8756bb314e655a58463af14d2"
+      ],
+      "COE2": [
+        82,
+        "1c9ba9ede3fab2e9f0a97ab06c55592e3c20a52c5037b4c05a00db10bba8dbfb"
+      ]
+    },
+    "entity_field": "ent",
+    "reference_totals": {
+      "population": 102615200,
+      "pea": 61065005,
+      "occupied": 59440760,
+      "unemployed": 1624245
+    },
+    "reference_uri": "https://www.inegi.org.mx/contenidos/saladeprensa/boletines/2025/enoe/enoe2025_08.pdf",
+    "source_uri": "https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/datosabiertos/2025/conjunto_de_datos_enoe_2025_2t_csv.zip",
+    "reviewed_on": "2026-11-04",
+    "completed_interview_code": "0"
+  },
+  "2025q4": {
+    "year": 2025,
+    "quarter": 4,
+    "archive_sha256": "e4d4284cc9924a40c39544a5530715f320a5627cd81997214c0430827616d9d6",
+    "tables": {
+      "VIV": {
+        "rows": 150356,
+        "member_sha256": "598337e81bc32113714389611bba9202a96f0db74215b03e3993b24dedb4bae9",
+        "dictionary_sha256": "f96bb59f2cab419f32dfe458101d40932ba2a843c6822081522e50962e5a1d55",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "cve_ent",
+          "con",
+          "v_sel"
+        ],
+        "nonascii_fields": {}
+      },
+      "HOG": {
+        "rows": 151333,
+        "member_sha256": "9b087a8295b1248c82dabba819f79acb5615549fb60113d9319990a518341939",
+        "dictionary_sha256": "d3cb0aba6335af39a54c3528eded42878373aa8c13470fb8e07fe32f176bc8a6",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "cve_ent",
+          "con",
+          "v_sel",
+          "n_hog",
+          "h_mud"
+        ],
+        "nonascii_fields": {}
+      },
+      "SDEM": {
+        "rows": 419038,
+        "member_sha256": "088a2affeaef800bd9941656869392290905a9cf597af42a15d748b13b43de7e",
+        "dictionary_sha256": "43dd74055f8d4c934c5101b68f70065517f4a4b538d8230592e273b4c0ec6cbe",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "cve_ent",
+          "con",
+          "v_sel",
+          "n_hog",
+          "h_mud",
+          "n_ren"
+        ],
+        "nonascii_fields": {
+          "cs_p23_des": 119,
+          "cs_p21_des": 468
+        }
+      },
+      "COE1": {
+        "rows": 344166,
+        "member_sha256": "feb27cf3a8798b945bfbcd4785e3901a800718c463158cb002e2a3cba5caa1d4",
+        "dictionary_sha256": "d305bfc8bb0a85a06b6dca6095f155552040717d9f04bd6b50364ea23028241b",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "cve_ent",
+          "con",
+          "v_sel",
+          "n_hog",
+          "h_mud",
+          "n_ren"
+        ],
+        "nonascii_fields": {}
+      },
+      "COE2": {
+        "rows": 344166,
+        "member_sha256": "6f3b77261168d8a9c1f638984a9ecaac312a2fb7b219fe1a3618b053d286d88c",
+        "dictionary_sha256": "7bae811cbb54235ed8c8e87e2a810fa6db17f0bfde0ef58d18fc0f27b52d56f6",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "cve_ent",
+          "con",
+          "v_sel",
+          "n_hog",
+          "h_mud",
+          "n_ren"
+        ],
+        "nonascii_fields": {}
+      }
+    },
+    "header_signatures": {
+      "VIV": [
+        26,
+        "f666b0bfcd8f14a88696a2a17c0134e118fed120c49b2ff55476f60c3a8bb581"
+      ],
+      "HOG": [
+        38,
+        "91cde8fd01486f2e2a78887e30c135a69fe13a6d416d1c3c612a9b5ba677b8f9"
+      ],
+      "SDEM": [
+        115,
+        "13613857a5a025f9ebd57d92e35ca905fb2336855dc6269f3a6bf0951a55fe54"
+      ],
+      "COE1": [
+        174,
+        "5d743d50d7d7ddf17b72849889a090d234e6c56dc2af8960fa1f25130c7e50c5"
+      ],
+      "COE2": [
+        84,
+        "db0aa70068284708f268cbe5021bf92eb8df39a5df1f95858df0e8d31ded16f2"
+      ]
+    },
+    "entity_field": "cve_ent",
+    "reference_totals": {
+      "population": 103482949,
+      "pea": 61348202,
+      "occupied": 59785854,
+      "unemployed": 1562348
+    },
+    "reference_uri": "https://www.inegi.org.mx/contenidos/saladeprensa/boletines/2026/enoe/enoe2026_02.pdf",
+    "source_uri": "https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/datosabiertos/2025/conjunto_de_datos_enoe_2025_4t_csv.zip",
+    "reviewed_on": "2026-11-04",
+    "completed_interview_code": "00"
+  },
+  "2026q2": {
+    "year": 2026,
+    "quarter": 2,
+    "archive_sha256": "9ef8877c363f6097da1a04b2077cbda96300cc474b38f835c4963d1dd8f953df",
+    "tables": {
+      "VIV": {
+        "rows": 150350,
+        "member_sha256": "1b43463e009d2084da65a410ce0dea873816af0675b42aa218332309d1c6d996",
+        "dictionary_sha256": "f96bb59f2cab419f32dfe458101d40932ba2a843c6822081522e50962e5a1d55",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "cve_ent",
+          "con",
+          "v_sel"
+        ],
+        "nonascii_fields": {}
+      },
+      "HOG": {
+        "rows": 151316,
+        "member_sha256": "27593f52b87d3a4c4c9265f9cdcd9d5c2aa4745515a720bbe2d245f755ea8e6d",
+        "dictionary_sha256": "d3cb0aba6335af39a54c3528eded42878373aa8c13470fb8e07fe32f176bc8a6",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "cve_ent",
+          "con",
+          "v_sel",
+          "n_hog",
+          "h_mud"
+        ],
+        "nonascii_fields": {}
+      },
+      "SDEM": {
+        "rows": 417128,
+        "member_sha256": "6256468cd6cf5ed08b8538f8094eb3cf20793cb669ba0084c18f571fc8f78407",
+        "dictionary_sha256": "43dd74055f8d4c934c5101b68f70065517f4a4b538d8230592e273b4c0ec6cbe",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "cve_ent",
+          "con",
+          "v_sel",
+          "n_hog",
+          "h_mud",
+          "n_ren"
+        ],
+        "nonascii_fields": {
+          "cs_p21_des": 336,
+          "cs_p23_des": 45
+        }
+      },
+      "COE1": {
+        "rows": 344709,
+        "member_sha256": "8dac1940cf9200678cecd0507b371133375809a6f6083d611952f45806d00952",
+        "dictionary_sha256": "864e2fec3efd90fd72c1ac6aa8f6e81f9d3386bcb67c69237794c7f3aef793c8",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "cve_ent",
+          "con",
+          "v_sel",
+          "n_hog",
+          "h_mud",
+          "n_ren"
+        ],
+        "nonascii_fields": {}
+      },
+      "COE2": {
+        "rows": 344709,
+        "member_sha256": "a411c9afb1930eadba68dc88f44b72d7d6202528dc11d126db3c522b64939a63",
+        "dictionary_sha256": "7bae811cbb54235ed8c8e87e2a810fa6db17f0bfde0ef58d18fc0f27b52d56f6",
+        "key": [
+          "tipo",
+          "mes_cal",
+          "cd_a",
+          "cve_ent",
+          "con",
+          "v_sel",
+          "n_hog",
+          "h_mud",
+          "n_ren"
+        ],
+        "nonascii_fields": {}
+      }
+    },
+    "header_signatures": {
+      "VIV": [
+        26,
+        "f666b0bfcd8f14a88696a2a17c0134e118fed120c49b2ff55476f60c3a8bb581"
+      ],
+      "HOG": [
+        38,
+        "91cde8fd01486f2e2a78887e30c135a69fe13a6d416d1c3c612a9b5ba677b8f9"
+      ],
+      "SDEM": [
+        115,
+        "13613857a5a025f9ebd57d92e35ca905fb2336855dc6269f3a6bf0951a55fe54"
+      ],
+      "COE1": [
+        174,
+        "5d743d50d7d7ddf17b72849889a090d234e6c56dc2af8960fa1f25130c7e50c5"
+      ],
+      "COE2": [
+        84,
+        "db0aa70068284708f268cbe5021bf92eb8df39a5df1f95858df0e8d31ded16f2"
+      ]
+    },
+    "entity_field": "cve_ent",
+    "reference_totals": {
+      "population": 104305022,
+      "pea": 61676698,
+      "occupied": 60040094,
+      "unemployed": 1636604
+    },
+    "reference_uri": "https://www.inegi.org.mx/contenidos/saladeprensa/boletines/2026/enoe/enoe2026_08.pdf",
+    "source_uri": "https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/datosabiertos/2026/conjunto_de_datos_enoe_2026_2t_csv.zip",
+    "reviewed_on": "2026-11-04",
+    "completed_interview_code": "0"
+  }
+}

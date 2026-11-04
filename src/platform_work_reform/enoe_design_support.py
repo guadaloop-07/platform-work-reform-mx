@@ -38,7 +38,10 @@ class DesignSupport:
         previous = self.point_audit.counts["eligible"]
         self.point_audit.add(values, True, True)
         eligible = self.point_audit.counts["eligible"] > previous
-        completed = values["r_def"] == "0" and values["c_res"] in {"1", "3"}
+        completed = values["r_def"] == self.point_audit.completed_code and values["c_res"] in {
+            "1",
+            "3",
+        }
         membership = {
             "all_observed": True,
             "completed_residents": completed,
@@ -107,7 +110,15 @@ class DesignSupport:
         }
 
 
-def audit(settings: Settings, run_id: UUID) -> dict:
+def audit(settings: Settings, run_id: UUID, *, year: int = 2025, quarter: int = 3) -> dict:
+    source_hash, entity_field = ARCHIVE_SHA256, "cve_ent"
+    if (year, quarter) != (2025, 3):
+        from platform_work_reform.enoe_releases import release
+
+        reviewed = release(year, quarter)
+        source_hash, entity_field = reviewed["archive_sha256"], reviewed["entity_field"]
+    expected_period = f"{year}-{3 * quarter - 2:02d}-01"
+    expected_layout = f"enoe-{year}q{quarter}-v1"
     with psycopg.connect(**settings.connection_parameters()) as conn:
         with conn.transaction():
             conn.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY")
@@ -121,24 +132,30 @@ def audit(settings: Settings, run_id: UUID) -> dict:
             ).fetchone()
             if (
                 not metadata
-                or metadata[0] != ARCHIVE_SHA256
-                or str(metadata[1]) != "2025-07-01"
-                or metadata[2:4] != ("enoe-2025q3-v1", "succeeded")
+                or metadata[0] != source_hash
+                or str(metadata[1]) != expected_period
+                or metadata[2:4] != (expected_layout, "succeeded")
             ):
                 raise ValueError("Unsupported ENOE load")
             header = metadata[4]
-            validate_header(2025, 3, "SDEM", header)
-            positions = {name: header.index(name) for name in FIELDS}
+            validate_header(year, quarter, "SDEM", header)
+            positions = {
+                name: header.index(entity_field if name == "cve_ent" else name) for name in FIELDS
+            }
             result = DesignSupport()
+            if (year, quarter) != (2025, 3):
+                result.point_audit.completed_code = reviewed["completed_interview_code"]
             with conn.cursor(name="enoe_design_support") as cursor:
                 cursor.execute(
-                    """SELECT sdem_raw_fields FROM enoe.person_quarter_pilot WHERE run_id=%s
-                       ORDER BY sdem_row_number""",
+                    """SELECT raw_fields FROM staging.enoe_row
+                       WHERE run_id=%s AND table_name='SDEM' ORDER BY row_number""",
                     (run_id,),
                 )
                 for (raw,) in cursor:
                     result.add({name: ascii_value(raw[pos]) for name, pos in positions.items()})
             output = result.report()
+            if (year, quarter) != (2025, 3):
+                output["version"] = f"enoe-observed-design-support-{year}q{quarter}-v1"
             output.update({"run_id": str(run_id), "source_sha256": metadata[0]})
             if not result.counts["all_observed"]:
                 raise ValueError("Empty ENOE load")
