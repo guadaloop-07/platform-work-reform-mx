@@ -15,6 +15,12 @@ independently re-hash staged bytes. An unknown, unsupported or empty run fails.
 Only aggregate counts, support histograms and provenance are emitted; person
 records, stratum codes and UPM identifiers are not printed.
 
+Version `enoe-observed-design-support-2025q3-v2` additionally emits an ordered
+selected-field fingerprint for comparison with the original archive. The
+[precision methodology note](enoe-precision-methodology.md) documents the
+fingerprint, source verification command and official confidence-interval
+formula with its source link and page references.
+
 ## Definitions
 
 Design keys use the original CSV names `cve_ent`, `est_d_tri` and `upm`,
@@ -64,9 +70,12 @@ totals reproduce the existing pilot reference values.
 [INEGI metadata](https://www.inegi.org.mx/rnm/index.php/catalog/1121) describes
 ultimate-cluster and Taylor methods, but the operational implementation still
 requires period-specific methodological support and independent validation.
-Issue #42 must determine the applicable design population, treatment of
-nonresponse, official handling of the observed singleton strata, variance
-formulas, degrees of freedom and confidence level. Validate against the
+The documented calculation kernel implements the published total/ratio
+formulas and normal-quantile interval for supported supplied designs. Issue #42
+must still determine the applicable design population, treatment of nonresponse,
+official handling of the observed singleton strata and reference confidence
+level. Do not substitute a Student-t critical value without a supported reason.
+Validate against the
 [published precision workbook](https://www.inegi.org.mx/rnm/index.php/catalog/1121/download/36732)
 or a trusted independent implementation with documented assumptions. Do not
 publish standard errors, CVs or confidence intervals based on this audit alone.

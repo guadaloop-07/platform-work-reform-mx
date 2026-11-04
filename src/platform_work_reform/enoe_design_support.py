@@ -1,6 +1,7 @@
 """Audit observed design support; do not estimate variance or reconstruct a frame."""
 
 import argparse
+import hashlib
 import json
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
@@ -13,7 +14,7 @@ from platform_work_reform.enoe_contract import validate_header
 from platform_work_reform.enoe_pilot_indicators import Audit, ascii_value
 from platform_work_reform.enoe_staging import ARCHIVE_SHA256
 
-VERSION = "enoe-observed-design-support-2025q3-v1"
+VERSION = "enoe-observed-design-support-2025q3-v2"
 FIELDS = ("cve_ent", "est_d_tri", "upm", "eda", "r_def", "c_res", "fac_tri", "clase1", "clase2")
 GROUPS = ("all_observed", "completed_residents", "population_15_plus", "pea")
 
@@ -30,6 +31,7 @@ class DesignSupport:
     missing: Counter = field(default_factory=Counter)
     clusters: dict = field(default_factory=lambda: {name: defaultdict(set) for name in GROUPS})
     point_audit: Audit = field(default_factory=Audit)
+    fields_digest: object = field(default_factory=hashlib.sha256, repr=False)
 
     def add(self, values: dict[str, str]) -> None:
         # Reuse the pilot's reviewed eligibility and activity-code validation.
@@ -48,6 +50,11 @@ class DesignSupport:
         ]
         if completed and bad_keys:
             raise ValueError("Missing or invalid design key among completed residents")
+        self.fields_digest.update(
+            (json.dumps([values[name] for name in FIELDS], ensure_ascii=False) + "\n").encode(
+                "ascii"
+            )
+        )
         for group, included in membership.items():
             if not included:
                 continue
@@ -89,6 +96,7 @@ class DesignSupport:
             "version": VERSION,
             "groups": groups,
             "weighted_totals": dict(self.point_audit.weights),
+            "ordered_fields_sha256": self.fields_digest.hexdigest(),
             "variance_ready": False,
             "limitations": [
                 "Observed SDEM support is not the full sampling frame.",
@@ -124,7 +132,8 @@ def audit(settings: Settings, run_id: UUID) -> dict:
             result = DesignSupport()
             with conn.cursor(name="enoe_design_support") as cursor:
                 cursor.execute(
-                    "SELECT sdem_raw_fields FROM enoe.person_quarter_pilot WHERE run_id=%s",
+                    """SELECT sdem_raw_fields FROM enoe.person_quarter_pilot WHERE run_id=%s
+                       ORDER BY sdem_row_number""",
                     (run_id,),
                 )
                 for (raw,) in cursor:

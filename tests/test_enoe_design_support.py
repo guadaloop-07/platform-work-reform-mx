@@ -82,3 +82,14 @@ def test_activity_restriction_does_not_remove_parent_support():
         ]
         == 1
     )
+
+
+def test_ordered_field_fingerprint_detects_changes_hidden_by_aggregates():
+    original, reordered = DesignSupport(), DesignSupport()
+    rows = [record(), record(upm="002")]
+    for row in rows:
+        original.add(row)
+    for row in reversed(rows):
+        reordered.add(row)
+    assert original.report()["groups"] == reordered.report()["groups"]
+    assert original.report()["ordered_fields_sha256"] != reordered.report()["ordered_fields_sha256"]
