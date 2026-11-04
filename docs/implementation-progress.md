@@ -16,7 +16,7 @@
 | P12–P13 | 44 months staged, independently reconciled and selected; one exception | Partial |
 | P14 | PR #31; reviewed ENOE 2025 Q3 source and join contract | Pilot merged |
 | P15 | PR #33; transactional ENOE pilot loader and isolated real-data test | Pilot merged |
-| P16 | Prepared 2025 Q3 person-quarter pilot and national point-estimate reconciliation; no survey-design precision | In progress |
+| P16 | Prepared 2025 Q3 pilot, point-estimate reconciliation, design-support audit and [documented variance kernel](enoe-precision-methodology.md); national precision remains unvalidated (#42) | In progress |
 | P17 | Policy calendar and analytical crosswalks required by the comparability contract | Pending |
 | P18 | [IMSS–ENOE comparability objective and study contract](imss-enoe-comparability.md); empirical assessment not yet implemented | Pending |
 
