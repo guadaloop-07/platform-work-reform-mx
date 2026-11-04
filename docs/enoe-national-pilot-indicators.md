@@ -47,3 +47,7 @@ table 5. A mismatch makes the command exit unsuccessfully. These checks do not
 validate all fields, survey design or precision and do not establish platform
 worker identification, cross-quarter identity or causal effects. Variance and
 confidence intervals require separately validated survey-design work.
+
+The [observed design-support audit](enoe-design-support.md) compares stratum/UPM
+support before and after population restrictions. It is a prerequisite
+diagnostic for issue #42, not a variance estimator or precision validation.
