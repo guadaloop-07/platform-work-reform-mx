@@ -23,7 +23,7 @@ no external project database or credentials may be reused accidentally.
 | P15 | Official ENOE source ingestion | P14 |
 | P16 | Validated person-quarter preparation | P15 |
 | P17 | INPC, policy calendar and documented crosswalks | P12 |
-| P18 | Platform-worker identification feasibility | P16, P17 |
+| P18 | IMSS–ENOE population comparability and platform-worker identification feasibility | P16, P17; compatible source periods |
 | P19 | Shared instance and individually assigned roles | P05; may be advanced |
 | P20 | Optional official-source downloader | P12 |
 
@@ -39,3 +39,11 @@ reports contain only reviewed aggregates and provenance safe to publish.
 
 No causal estimator is selected until P18 establishes a defensible population and
 comparison design. IMSS cells are aggregates, not person-level linkage records.
+
+P18 follows the [comparability study contract](imss-enoe-comparability.md):
+independently define candidate ENOE populations, harmonize units and coverage,
+and assess agreement with IMSS using supported common periods and survey
+precision. Aggregate agreement does not identify prior informality or individual
+formalization transitions. A documented finding of insufficient identification
+is a valid feasibility outcome. Implement its dependency and analysis tasks in
+separate scoped issues; documenting the objective does not complete P18.
