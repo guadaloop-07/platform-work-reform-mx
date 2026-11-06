@@ -93,3 +93,17 @@ def test_ordered_field_fingerprint_detects_changes_hidden_by_aggregates():
         reordered.add(row)
     assert original.report()["groups"] == reordered.report()["groups"]
     assert original.report()["ordered_fields_sha256"] != reordered.report()["ordered_fields_sha256"]
+
+
+def test_completed_interview_code_is_an_explicit_release_rule():
+    from platform_work_reform.enoe_pilot_indicators import Audit
+
+    raw = record(r_def="00")
+    versioned = DesignSupport(point_audit=Audit(completed_code="00"))
+    versioned.add(raw)
+    pilot = DesignSupport()
+    pilot.add(raw)
+    assert versioned.report()["groups"]["population_15_plus"]["records"] == 1
+    assert pilot.report()["groups"]["population_15_plus"]["records"] == 0
+    # The original code is retained in both fingerprints, independent of interpretation.
+    assert versioned.report()["ordered_fields_sha256"] == pilot.report()["ordered_fields_sha256"]
