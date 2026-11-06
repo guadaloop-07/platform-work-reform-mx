@@ -29,16 +29,19 @@ profiles are evidence of compatibility, not proof of population identity.
 - IMSS has 44 selected, reconciled months from January 2023 through September
   2026, excluding January 2025 (issue #27). Only May–September 2026 selected
   local releases contain `ptpd`. An absent field is not zero platform work.
-- ENOE has one prepared 2025 Q3 pilot. National activity point estimates have
-  been reconciled, but this does not validate platform classification,
-  informality, earnings, social-security variables or survey precision.
+- ENOE has reviewed, reconciled staging for 2025 Q2/Q3/Q4 and 2026 Q2.
+  The [multi-quarter preparation](enoe-multiquarter-preparation.md) extends the
+  national activity contract to explicit runs in all four periods. This does not
+  validate platform classification, informality, earnings, social-security
+  variables or survey precision.
 - Issue #42 must establish supported survey-design variance and domain handling.
   Small population estimates require uncertainty diagnostics, not just weights.
 - P17 must supply a versioned policy calendar, applicable definitions and
   documented classification and price crosswalks where needed.
-- There is currently no prepared overlapping period between ENOE and selected
-  IMSS releases containing `ptpd`. Verify official historical IMSS alternatives
-  or prepare an available compatible ENOE quarter under a separate scoped task.
+- ENOE 2026 Q2 provides a partial overlap with selected IMSS releases containing
+  `ptpd` in May–June. April lacks the field. This is not a complete quarterly
+  platform count or a validated temporal alignment. A defensible common-period
+  contract or an explicit no-go finding is still required.
 
 See [progress](implementation-progress.md), [IMSS inventory](imss-inventory.md),
 [IMSS count definitions](imss-metric-definitions.md), and
