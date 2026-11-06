@@ -16,7 +16,7 @@
 | P12–P13 | 44 months staged, independently reconciled and selected; one exception | Partial |
 | P14 | PR #31 pilot; issue #53 [reviewed multi-quarter contracts](enoe-multiquarter-ingestion.md) for 2025 Q2/Q4 and 2026 Q2 | Expanded |
 | P15 | PR #33 pilot; issue #53 transactional loads of three additional quarters, all five tables per run, idempotence verified | Expanded |
-| P16 | Prepared 2025 Q3 pilot; issue #53 cross-quarter point/source/design reconciliation and [documented variance kernel](enoe-precision-methodology.md); national precision remains unvalidated (#42) | In progress |
+| P16 | [Four-period national activity preparation](enoe-multiquarter-preparation.md) (#55); cross-quarter point/source/design reconciliation and [documented variance kernel](enoe-precision-methodology.md); national precision remains unvalidated (#42) | In progress |
 | P17 | Policy calendar and analytical crosswalks required by the comparability contract | Pending |
 | P18 | [IMSS–ENOE comparability objective and study contract](imss-enoe-comparability.md); empirical assessment not yet implemented | Pending |
 
