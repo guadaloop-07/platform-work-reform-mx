@@ -36,12 +36,17 @@ profiles are evidence of compatibility, not proof of population identity.
   variables or survey precision.
 - Issue #42 must establish supported survey-design variance and domain handling.
   Small population estimates require uncertainty diagnostics, not just weights.
-- P17 must supply a versioned policy calendar, applicable definitions and
-  documented classification and price crosswalks where needed.
+- The first P17 [policy calendar](p17-policy-calendar.md) and
+  [measurement contract](p17-measurement-contract.md) document available concepts
+  and remaining gates. The period-specific `ptpd` catalogue is still needed
+  before approving a platform-selection code; ENOE instrument-version/routing
+  validation and classification/price crosswalks remain subsequent tasks.
 - ENOE 2026 Q2 provides a partial overlap with selected IMSS releases containing
   `ptpd` in May–June. April lacks the field. This is not a complete quarterly
   platform count or a validated temporal alignment. A defensible common-period
-  contract or an explicit no-go finding is still required.
+  contract is not established: the P17 decision is no-go for a full-quarter
+  comparison using these selected releases, pending a complete compatible
+  window and the unresolved field/unit/precision gates.
 
 See [progress](implementation-progress.md), [IMSS inventory](imss-inventory.md),
 [IMSS count definitions](imss-metric-definitions.md), and
