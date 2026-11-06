@@ -1,4 +1,4 @@
-"""Stage the reviewed ENOE 2025 Q3 release without interpreting source bytes."""
+"""Stage allowlisted reviewed ENOE releases without interpreting source bytes."""
 
 import argparse
 import csv
@@ -76,12 +76,12 @@ def digest(path: Path) -> str:
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def members(table: str) -> tuple[str, str]:
+def members(table: str, year: int = 2025, quarter: int = 3) -> tuple[str, str]:
     name = table.lower()
-    base = f"conjunto_de_datos_{name}_enoe_2025_3t"
+    base = f"conjunto_de_datos_{name}_enoe_{year}_{quarter}t"
     return (
         f"{base}/conjunto_de_datos/{base}.csv",
-        f"{base}/diccionario_de_datos/diccionario_datos_{name}_enoe_2025_3t.csv",
+        f"{base}/diccionario_de_datos/diccionario_datos_{name}_enoe_{year}_{quarter}t.csv",
     )
 
 
@@ -90,10 +90,28 @@ def member_digest(archive: zipfile.ZipFile, member: str) -> str:
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def load(settings: Settings, source: Path) -> dict[str, int]:
+def load(settings: Settings, source: Path, *, year: int = 2025, quarter: int = 3) -> dict[str, int]:
     """Load only the exact reviewed release, atomically and without source mutation."""
-    if source.is_symlink() or not source.is_file() or digest(source) != ARCHIVE_SHA256:
-        raise ValueError("Source is not the reviewed ENOE 2025 Q3 archive")
+    archive_sha, contracts = ARCHIVE_SHA256, CONTRACTS
+    if (year, quarter) != (2025, 3):
+        from platform_work_reform.enoe_releases import release
+
+        reviewed = release(year, quarter)
+        archive_sha = reviewed["archive_sha256"]
+        contracts = tuple(
+            TableContract(
+                name,
+                key_fields(year, quarter, name),
+                values["rows"],
+                values["member_sha256"],
+                values["dictionary_sha256"],
+            )
+            for name, values in reviewed["tables"].items()
+        )
+    period = date(year, 3 * quarter - 2, 1)
+    layout = f"enoe-{year}q{quarter}-v1"
+    if source.is_symlink() or not source.is_file() or digest(source) != archive_sha:
+        raise ValueError("Source is not the reviewed ENOE archive")
     with (
         zipfile.ZipFile(source) as archive,
         psycopg.connect(**settings.connection_parameters()) as conn,
@@ -109,15 +127,15 @@ def load(settings: Settings, source: Path) -> dict[str, int]:
                RETURNING id""",
             (
                 source.name,
-                ARCHIVE_SHA256,
+                archive_sha,
                 source.stat().st_size,
-                "https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/datosabiertos/2025/"
-                "conjunto_de_datos_enoe_2025_3t_csv.zip",
+                f"https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/datosabiertos/{year}/"
+                f"conjunto_de_datos_enoe_{year}_{quarter}t_csv.zip",
             ),
         ).fetchone()[0]
         existing = conn.execute(
             "SELECT run_id FROM staging.enoe_load WHERE source_file_id=%s AND reference_period=%s",
-            (source_id, date(2025, 7, 1)),
+            (source_id, period),
         ).fetchone()
         if existing:
             return dict(
@@ -134,11 +152,11 @@ def load(settings: Settings, source: Path) -> dict[str, int]:
         conn.execute(
             "INSERT INTO staging.enoe_load(run_id,source_file_id,reference_period,layout_version) "
             "VALUES (%s,%s,%s,%s)",
-            (run_id, source_id, date(2025, 7, 1), "enoe-2025q3-v1"),
+            (run_id, source_id, period, layout),
         )
         counts = {}
-        for contract in CONTRACTS:
-            data, dictionary = members(contract.name)
+        for contract in contracts:
+            data, dictionary = members(contract.name, year, quarter)
             if (
                 member_digest(archive, data) != contract.member_sha256
                 or member_digest(archive, dictionary) != contract.dictionary_sha256
@@ -155,8 +173,10 @@ def load(settings: Settings, source: Path) -> dict[str, int]:
             ):
                 reader = csv.reader(text, strict=True)
                 header = next(reader)
-                validate_header(2025, 3, contract.name, header)
-                if header != expected_header or contract.key != key_fields(2025, 3, contract.name):
+                validate_header(year, quarter, contract.name, header)
+                if header != expected_header or contract.key != key_fields(
+                    year, quarter, contract.name
+                ):
                     raise ValueError(f"Unexpected {contract.name} header")
                 indexes = [header.index(field) for field in contract.key]
                 conn.execute(
@@ -196,8 +216,11 @@ def load(settings: Settings, source: Path) -> dict[str, int]:
                 if count != contract.rows:
                     raise ValueError(f"Unexpected {contract.name} row count")
                 counts[contract.name] = count
+        # New uncommitted run IDs have no useful planner statistics. Avoid a
+        # quadratic nested-loop anti-join while retaining every orphan check.
+        conn.execute("SET LOCAL enable_nestloop = off")
         for parent, child in sorted(RELATIONSHIPS):
-            width = len(key_fields(2025, 3, parent))
+            width = len(key_fields(year, quarter, parent))
             orphan_count = conn.execute(
                 """SELECT count(*) FROM staging.enoe_row c
                 WHERE c.run_id=%s AND c.table_name=%s AND NOT EXISTS
@@ -207,7 +230,7 @@ def load(settings: Settings, source: Path) -> dict[str, int]:
             ).fetchone()[0]
             if orphan_count:
                 raise ValueError(f"Unmatched {child} keys against {parent}")
-        if digest(source) != ARCHIVE_SHA256:
+        if digest(source) != archive_sha:
             raise ValueError("Source changed during loading")
         conn.execute(
             "UPDATE meta.ingestion_run SET status='succeeded',finished_at=now() WHERE id=%s",
@@ -219,8 +242,10 @@ def load(settings: Settings, source: Path) -> dict[str, int]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("archive", type=Path)
+    parser.add_argument("--year", type=int, default=2025)
+    parser.add_argument("--quarter", type=int, default=3)
     args = parser.parse_args()
-    print(load(Settings.from_env(), args.archive))
+    print(load(Settings.from_env(), args.archive, year=args.year, quarter=args.quarter))
 
 
 if __name__ == "__main__":

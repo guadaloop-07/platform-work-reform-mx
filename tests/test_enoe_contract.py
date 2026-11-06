@@ -16,7 +16,7 @@ from platform_work_reform.enoe_contract import (
 
 def test_only_reviewed_period_and_tables_are_supported():
     assert key_fields(2025, 3, "SDEM")[-1] == "n_ren"
-    for period, table in [((2025, 2), "SDEM"), ((2025, 3), "UNKNOWN")]:
+    for period, table in [((2025, 1), "SDEM"), ((2025, 3), "UNKNOWN")]:
         with pytest.raises(ContractError):
             key_fields(*period, table)
 

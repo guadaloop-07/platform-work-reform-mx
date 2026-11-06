@@ -1,4 +1,4 @@
-"""Pre-ingestion checks for the documented 2025 Q3 ENOE join keys.
+"""Pre-ingestion checks for explicitly reviewed ENOE source layouts and join keys.
 
 These checks are not a complete CSV layout or a substitute for reconciliation.
 """
@@ -56,8 +56,15 @@ def preserve_sdem_text_bytes(row: Mapping[str, str]) -> dict[str, bytes]:
 
 def key_fields(year: int, quarter: int, table: str) -> tuple[str, ...]:
     """Return fields only for the period whose published dictionary was reviewed."""
-    if (year, quarter) != (2025, 3) or table not in KEYS:
+    if table not in KEYS:
         raise ContractError("Unsupported ENOE period or table")
+    if (year, quarter) != (2025, 3):
+        from platform_work_reform.enoe_releases import release
+
+        try:
+            return tuple(release(year, quarter)["tables"][table]["key"])
+        except ValueError as error:
+            raise ContractError("Unsupported ENOE period or table") from error
     return KEYS[table]
 
 
@@ -75,7 +82,12 @@ def validate_header(year: int, quarter: int, table: str, header: Sequence[str]) 
         signature = sha256("\n".join(header).encode("ascii")).hexdigest()
     except UnicodeEncodeError as exc:
         raise ContractError("Unknown source header") from exc
-    if (len(header), signature) != HEADER_SIGNATURES[table]:
+    signatures = HEADER_SIGNATURES
+    if (year, quarter) != (2025, 3):
+        from platform_work_reform.enoe_releases import release
+
+        signatures = release(year, quarter)["header_signatures"]
+    if (len(header), signature) != tuple(signatures[table]):
         raise ContractError("Unknown source header")
 
 

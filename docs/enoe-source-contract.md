@@ -70,6 +70,10 @@ initial 2025 Q3 archive and dictionaries have been inspected as documented in
 quarters.
 INEGI can revise releases, so a new hash is a new version requiring review.
 
+Issue #53 adds separately reviewed contracts for 2025 Q2, 2025 Q4 and 2026 Q2;
+see [multi-quarter ingestion](enoe-multiquarter-ingestion.md) for original field
+names, source-specific interview codes, hashes and validation evidence.
+
 ## Requirements before analysis
 
 For the precoded variables, the 2025 structure specifies `r_def=0`,

@@ -15,6 +15,7 @@ from platform_work_reform.enoe_design_support import FIELDS, DesignSupport, audi
 from platform_work_reform.enoe_staging import (
     ARCHIVE_SHA256,
     CONTRACTS,
+    TableContract,
     digest,
     member_digest,
     members,
@@ -30,18 +31,36 @@ def summarize(support: dict, records: int) -> dict:
     }
 
 
-def verify_source(path: Path) -> dict:
-    if digest(path) != ARCHIVE_SHA256:
+def verify_source(path: Path, *, year: int = 2025, quarter: int = 3) -> dict:
+    source_hash, contracts, entity_field = ARCHIVE_SHA256, CONTRACTS, "cve_ent"
+    if (year, quarter) != (2025, 3):
+        from platform_work_reform.enoe_releases import release
+
+        reviewed = release(year, quarter)
+        source_hash, entity_field = reviewed["archive_sha256"], reviewed["entity_field"]
+        contracts = tuple(
+            TableContract(
+                name,
+                tuple(values["key"]),
+                values["rows"],
+                values["member_sha256"],
+                values["dictionary_sha256"],
+            )
+            for name, values in reviewed["tables"].items()
+        )
+    if digest(path) != source_hash:
         raise ValueError("Unsupported ENOE archive hash")
     supports, summaries = {}, {}
     result = DesignSupport()
+    if (year, quarter) != (2025, 3):
+        result.point_audit.completed_code = reviewed["completed_interview_code"]
     with zipfile.ZipFile(path) as archive:
         if len(archive.namelist()) != len(set(archive.namelist())):
             raise ValueError("Duplicate archive member")
-        for contract in CONTRACTS:
+        for contract in contracts:
             if contract.name not in {"VIV", "HOG", "SDEM"}:
                 continue
-            member, _ = members(contract.name)
+            member, _ = members(contract.name, year, quarter)
             if member_digest(archive, member) != contract.member_sha256:
                 raise ValueError("Source member hash mismatch")
             support = defaultdict(set)
@@ -50,17 +69,22 @@ def verify_source(path: Path) -> dict:
             with archive.open(member) as stream:
                 reader = csv.reader(io.TextIOWrapper(stream, encoding="latin-1"), strict=True)
                 header = next(reader)
-                validate_header(2025, 3, contract.name, header)
+                validate_header(year, quarter, contract.name, header)
                 for row in reader:
                     if len(row) != len(header):
                         raise ValueError("Malformed source row")
                     values = dict(zip(header, row, strict=True))
-                    codes = [values[name].strip() for name in ("cve_ent", "est_d_tri", "upm")]
+                    codes = [values[name].strip() for name in (entity_field, "est_d_tri", "upm")]
                     if not all(valid_code(code) for code in codes):
                         raise ValueError("Invalid source design key")
                     support[tuple(codes[:2])].add(codes[2])
                     if contract.name == "SDEM":
-                        result.add({name: values[name].strip() for name in FIELDS})
+                        result.add(
+                            {
+                                name: values[entity_field if name == "cve_ent" else name].strip()
+                                for name in FIELDS
+                            }
+                        )
                     records += 1
             if records != contract.rows:
                 raise ValueError("Source row count mismatch")
@@ -84,21 +108,35 @@ def verify_source(path: Path) -> dict:
                 len(parent[key]) > 1 for key in singletons
             ),
         }
-    if digest(path) != ARCHIVE_SHA256:
+    if digest(path) != source_hash:
         raise ValueError("Source archive changed during audit")
+    if (year, quarter) != (2025, 3):
+        if dict(result.point_audit.weights) != reviewed["reference_totals"]:
+            raise ValueError("National point estimates do not match the official reference")
+    sdem_audit = result.report()
+    if (year, quarter) != (2025, 3):
+        sdem_audit["version"] = f"enoe-observed-design-support-{year}q{quarter}-v1"
     return {
-        "version": "enoe-source-design-support-2025q3-v1",
-        "source_sha256": ARCHIVE_SHA256,
+        "year": year,
+        "quarter": quarter,
+        "entity_field": entity_field,
+        "version": f"enoe-source-design-support-{year}q{quarter}-v1",
+        "source_sha256": source_hash,
         "source_tables": summaries,
         "parent_comparisons": comparisons,
-        "sdem_audit": result.report(),
+        "sdem_audit": sdem_audit,
         "variance_ready": False,
     }
 
 
-def verify(settings: Settings, run_id: UUID, path: Path) -> dict:
-    output = verify_source(path)
-    staged = audit(settings, run_id)
+def verify(
+    settings: Settings, run_id: UUID, path: Path, *, year: int = 2025, quarter: int = 3
+) -> dict:
+    if (year, quarter) == (2025, 3):
+        output, staged = verify_source(path), audit(settings, run_id)
+    else:
+        output = verify_source(path, year=year, quarter=quarter)
+        staged = audit(settings, run_id, year=year, quarter=quarter)
     source = output["sdem_audit"]
     for key in ("groups", "weighted_totals", "ordered_fields_sha256"):
         if source[key] != staged[key]:
@@ -111,11 +149,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("archive", type=Path)
     parser.add_argument("--run-id", type=UUID)
+    parser.add_argument("--year", type=int, default=2025)
+    parser.add_argument("--quarter", type=int, default=3)
     args = parser.parse_args()
     output = (
-        verify(Settings.from_env(), args.run_id, args.archive)
+        verify(Settings.from_env(), args.run_id, args.archive, year=args.year, quarter=args.quarter)
         if args.run_id
-        else verify_source(args.archive)
+        else verify_source(args.archive, year=args.year, quarter=args.quarter)
     )
     print(json.dumps(output, indent=2, sort_keys=True))
 

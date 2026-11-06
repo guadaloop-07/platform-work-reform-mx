@@ -11,6 +11,10 @@ Any malformed input, duplicate key, unmatched child or changed archive rolls
 back the entire load. A repeat of the identical completed load returns its
 counts. The source archive remains outside Git and is never modified.
 
+The [issue #53 extension](enoe-multiquarter-ingestion.md) adds explicit reviewed
+period arguments for three other releases. The default remains this pilot;
+the existing pilot/prepared views do not automatically include new periods.
+
 Staging holds each logical CSV value as bytes in column order, together with
 the exact CSV header and row number; CSV quoting and record delimiters remain
 available in the original archive. Latin-1 is used only as a reversible
