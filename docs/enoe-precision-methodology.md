@@ -51,6 +51,55 @@ numeric code proximity, or apply another adjustment to published `fac_tri`,
 without period-specific support. The reviewed historical copy has SHA-256
 `42eaa300fcbd4bec98c2a38f3edb5912bcc2208fe69a54a0c1103b75a85dbd09`.
 
+## Public-source investigation: current collapse evidence
+
+The public-source review on 2026-11-04 found evidence beyond the 2021
+pandemic-era precedent. The
+[ENOE 2025 RNM metadata, Muestreo / Factores de expansión](https://www.inegi.org.mx/rnm/index.php/catalog/1121),
+explicitly includes stratum collapse among expansion-factor adjustments,
+alongside nonresponse and population adjustment. Therefore, it would be
+incorrect to describe collapse as documented only for ENOEN 2021. This statement
+does not identify which strata were collapsed in 2025 Q3, supply a crosswalk,
+or specify a singleton variance policy. Weight adjustment and variance-stratum
+assignment are separate implementation questions.
+
+The same metadata describes a Census-2020-based master frame, while the 2023
+methods document section 3.2, printed pages 42–43, describes the 2012 master
+sample based on Census 2010. This documentary difference requires version
+reconciliation; it does not establish the date or implementation of a frame
+transition in our reviewed archive, or explain the observed singleton strata.
+
+The [SDEMT325 EST_D_TRI variable record](https://www.inegi.org.mx/rnm/index.php/catalog/1121/variable/F47/V5875?name=EST_D_TRI)
+defines the quarterly design-stratum number for sampled dwellings. The
+[UPM record](https://www.inegi.org.mx/rnm/index.php/catalog/1121/variable/F47/V5883?name=UPM)
+defines geographic primary sampling units. Neither inspected record supplies a
+variance pseudo-stratum correspondence or a singleton exception.
+
+The 2025 [related-materials catalog](https://www.inegi.org.mx/rnm/index.php/catalog/1121/related-materials)
+links an older *Cómo se hace la ENOE* edition, UPC 702825190613. Its
+[2020 section 3.8, printed pages 47–48 / PDF pages 56–57](https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/nueva_estruc/702825190613.pdf#page=56)
+describes nonresponse and population-projection adjustment. Its section 3.11,
+printed page 54 / PDF page 63, repeats the ultimate-cluster variance structure
+with k/(k-1), without resolving k=1. The downloaded 2020 copy has SHA-256
+`abfb9998797e4f0ff4a14a692c47a7a631b0ad08e03c101fa952f40c5148f908`.
+The relevant formula pages were visually inspected. A metadata link to this
+older edition does not settle current operational details.
+
+The review covered the 2023 statistical-design chapter and production sections,
+2020 adjustment/variance sections, 2021 ENOEN design, 2025 RNM sampling and
+processing metadata, related materials and SDEMT325 variable definitions.
+Targeted searches on INEGI for collapse, pseudo-strata, singleton UPMs and
+variance code did not locate an executable 2025 Q3 mapping or correction in
+these materials. This is a bounded search result, not proof that no public
+file exists. Methods documented for other INEGI surveys or municipality-level
+small-area models do not establish an ENOE national variance policy.
+
+The next empirical check should characterize the singleton strata using
+publicly documented dimensions and evaluate justified sensitivity scenarios
+against official SEs. Agreement with a reference alone cannot identify an
+unpublished mapping. Preserve published `fac_tri`; do not apply a second
+collapse/weight adjustment or claim official replication on this evidence.
+
 ## Implemented calculation contract
 
 `platform_work_reform.survey_variance` accepts already weighted totals for every
