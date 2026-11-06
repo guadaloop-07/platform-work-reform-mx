@@ -24,3 +24,9 @@ and `NA` are represented as SQL `NULL` in the view; document missingness and do
 not silently interpret it as zero. Historical source layouts without `ptpd`
 retain it as `NULL`, so absence of `ptpd` does not mean absence of platform
 work. These aggregate records do not support individual IMSS–ENOE linkage.
+
+The first P17 [measurement contract](p17-measurement-contract.md) does not yet
+approve a `ptpd` selection code: the applicable official layout/catalogue and
+coverage/cutoff interpretation must be reviewed. Field presence and a plausible
+column name alone do not authorize equating its values with unique platform
+workers, initial registrations or threshold-qualified jobs.
