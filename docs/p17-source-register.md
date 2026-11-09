@@ -181,3 +181,13 @@ The PDF pages named above were rendered and reviewed; no analytical dataset,
 source correction or numerical estimate was produced. The notes identify gaps
 rather than treating failed retrieval as evidence of absence. Run `just check`
 for repository documentation hooks; there is no database or behavioral change.
+
+## S11 User-supplied IMSS dictionary transcription (2026-11-09)
+
+Issue #59 records the user-supplied `ptpd` and `ta` definitions in the
+[metric contract](imss-metric-definitions.md#provisional-platform-series-issue-59).
+The user reports temporary IMSS site unavailability. No original file, exact
+dictionary URL, version or applicability date was supplied. No official-source
+hash or retrieval is claimed. This supplements S10 for provisional implementation
+only; recovering and verifying the official period-specific dictionary remains
+a publication gate.
