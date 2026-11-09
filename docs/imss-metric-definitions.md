@@ -25,8 +25,64 @@ not silently interpret it as zero. Historical source layouts without `ptpd`
 retain it as `NULL`, so absence of `ptpd` does not mean absence of platform
 work. These aggregate records do not support individual IMSS–ENOE linkage.
 
-The first P17 [measurement contract](p17-measurement-contract.md) does not yet
-approve a `ptpd` selection code: the applicable official layout/catalogue and
-coverage/cutoff interpretation must be reviewed. Field presence and a plausible
-column name alone do not authorize equating its values with unique platform
-workers, initial registrations or threshold-qualified jobs.
+## Provisional platform series (issue #59)
+
+The user supplied a transcription of the IMSS dictionary on 2026-11-09:
+`ptpd`: “Identificador de trabajador de plataforma digital 1: Es trabajador de
+plataforma 0: No es trabajador de plataforma”. The transcription identifies
+`ta` as “Puestos de trabajo afiliados al IMSS (empleos asegurados o asegurados
+asociados a un empleo)”. The user reported temporary site unavailability.
+No original dictionary file, exact URL, publication version, applicability date
+or official-file hash was supplied or independently verified. This evidence is
+user-supplied, not a retrieved official source. Contract
+`user-transcription-2026-11-09-v1` permits provisional implementation of
+`SUM(ta)` for `ptpd = 1`; official-source publication remains pending recovery
+and verification of the applicable dictionary. Do not infer unique persons,
+threshold qualification, insurance branches or reporting-cutoff rules.
+
+```bash
+uv run --locked python -m platform_work_reform.imss_platform_series
+```
+
+The command uses a read-only repeatable-read snapshot of selected reconciled
+months, retaining reference date, run, source ID/hash/name and layout. It emits
+aggregate JSON only. It checks row counts against load metadata and independently
+aggregates overall and raw-code totals, reconciling counts, observed sums and
+missing metric counts. A historical reconciliation record is required; this
+command does not re-read or rehash the original source files.
+
+Codes `1` and `0` are exact; NULL, blank and `NA` are separate raw missing
+states combined into a reported missing-classification bucket. Other codes fail
+without emitting a report. Negative, fractional and nonfinite `ta` values fail.
+A category with any missing `ta` has a NULL total, with missing-row counts
+reported; observed partial sums are never labeled complete totals. An empty
+category in a platform layout has zero jobs. Legacy layouts require NULL `ptpd`
+and return NULL platform/nonplatform totals with status `unavailable`, even if
+no platform-coded row exists. Months absent from the selection are omitted,
+not filled. Classification missingness in a platform layout remains visible;
+its platform bucket is the count of explicitly identified jobs only.
+
+Each output carries the provisional source status and contract. No official
+publication or ENOE comparison is performed. Recover the official dictionary,
+record unchanged bytes/hash and period applicability, and reconcile coverage
+before changing that status. Never add monthly stocks to estimate unique people.
+
+### Local validation (2026-11-09)
+
+The read-only command reconciled all 44 selected months and 199,395,921 rows.
+Thirty-nine legacy months returned unavailable platform/nonplatform totals.
+The five platform-layout months (May–September 2026) contained only codes 0/1,
+with no missing `ta` or missing classification. For each month the platform
+and nonplatform job totals exactly matched overall `ta`; no invalid count or
+code was encountered. The aggregate report, including each selected source
+hash and run, is retained outside Git at `artifacts/imss-platform-series.json`.
+This is operational reconciliation under the provisional transcription contract,
+not independent verification of the official dictionary or source dimensions.
+
+`just check` passed 110 unit tests and shared hooks. `just db-test` passed 32
+isolated PostgreSQL integration tests, with one optional original-source test
+skipped. The initial integration attempt found PostgreSQL stopped; after
+`just db-up`, the full integration suite passed. Tests cover legacy missingness,
+platform/nonplatform/missing partitions, missing metrics, provenance, invalid
+codes/counts and reconciliation failures. The actual selected-month audit was
+executed separately from synthetic tests.

@@ -16,18 +16,14 @@ one eligible person per explicit quarterly run, not an employer registration or
 platform account. Multiple jobs and platforms prevent an assumed one-to-one
 conversion; no multiplicity correction is approved.
 
-`ptpd` is an available source dimension in selected May–September 2026 files,
-not an additional count to sum alongside `ta`. **Its analytical selection rule
-is not yet approved.** The official guide/glossary downloads returned access
-errors during this review; no accessible authoritative, period-specific layout
-and catalogue was obtained establishing `ptpd` values or whether they represent
-initial registrations, threshold-qualified jobs, or another coverage group.
-Do not infer that `ptpd=1` is the desired population from its name, third-party
-examples, observed frequencies or agreement with press totals. Obtain the
-applicable IMSS layout/catalogue, preserve its bytes/hash and validate its
-relationship to `ta`, covered insurance branches and reporting cutoff before
-publishing a filtered platform series. Missing historical `ptpd` remains NULL,
-not zero, and is distinct from any future documented nonplatform code.
+`ptpd` is available in selected May–September 2026 files. Issue #59 authorizes
+a provisional `ptpd = 1` selection using the user-supplied dictionary
+transcription, with `0` meaning nonplatform. The [metric contract](imss-metric-definitions.md#provisional-platform-series-issue-59)
+records provenance and executable missingness rules. This supersedes the earlier
+code-selection hold for provisional implementation only. Official dictionary
+version/hash and period applicability remain unverified; threshold qualification,
+insurance coverage and reporting-cutoff semantics remain unresolved. Missing
+historical `ptpd` remains NULL, never a nonplatform code or zero platform jobs.
 
 The [IMSS rules](p17-source-register.md#s02-imss-rules) explain registration and
 monthly adjustment obligations. They do not define the open-data column.
@@ -117,7 +113,7 @@ exhaustive claim that every ENOE item or later instrument lacks such a question.
 | Dimension | Decision for the first comparison |
 |---|---|
 | Unit | IMSS jobs versus ENOE people: conceptual comparison only until multiplicity and coverage assumptions are explicit. |
-| Coverage | Legal registration, monthly qualification and survey medical access are separate. `ptpd` population gate is unresolved. |
+| Coverage | Legal registration, monthly qualification and survey medical access are separate. Provisional `ptpd` coding is transcribed; official applicability and coverage remain unresolved. |
 | Geography | Begin with national feasibility. Do not equate IMSS employer-registration geography with ENOE residence; validate any workplace/residence mapping before subnational comparisons. No municipal representativeness inference. |
 | Occupation/activity | ENOE detail can define candidates after review; no IMSS occupation observation or direct industry-code equivalence is assumed. |
 | Time | **No-go for a full-quarter platform comparison using the currently selected releases.** April 2026 lacks `ptpd`; May–June cannot be presented as all of Q2. |
