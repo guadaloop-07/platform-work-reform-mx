@@ -191,3 +191,25 @@ dictionary URL, version or applicability date was supplied. No official-source
 hash or retrieval is claimed. This supplements S10 for provisional implementation
 only; recovering and verifying the official period-specific dictionary remains
 a publication gate.
+
+## S12 ENOE variable-validation supplements (2026-11-09)
+
+Issue #61 preserves originals under `data/reference/enoe-variables-2026-11-09/`,
+with a local `manifest.json` of retrieval dates, URLs, sizes and SHA-256 values:
+
+| Original | Source | SHA-256 |
+|---|---|---|
+| `rnm-1121-related-materials.html` | [2025 basic Q2/Q3/Q4 metadata](https://www.inegi.org.mx/rnm/index.php/catalog/1121/related-materials) | `b054c465fb8f659a3d56b5360f6bcf2483f2744b80a3c687b104c9943fc1bac9` |
+| `c_bas_v7.pdf` | [Cuestionario de Ocupación y Empleo (Básico), seventh version, COE BÁSICO 2023](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/c_bas_v7.pdf) | `7ee25f114a493cd4136bb086f7fa3a2f6db1fe7300dc5839ec2a7de9c3efa698` |
+| `recons_var_15ymas.pdf` | [Reconstrucción de variables, 2023](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/recons_var_15ymas.pdf) | `747b41847a82af8e6f43fd7b9453ee211c58cbe28017377f411f7e15b98831bf` |
+
+The RNM page links the two PDFs. Its questionnaire title is basic, while a
+description incorrectly calls it expanded; the retrieved PDF cover says basic.
+PDF pages 5 and 8–10 of the questionnaire and pages 20/124 of reconstruction
+were rendered and visually inspected. The earlier S08 COE 2021 copy is retained
+as historical evidence; it is not relabeled as 2023. S12 improves 2025 instrument
+linkage but does not confirm 2026 Q2 applicability. The [validation note](enoe-variable-validation.md)
+documents routes, the grouping of `p6d=2..4` under the reconstruction label
+ISSSTE, observed source/staged agreement and remaining gates. No original was
+modified, and no person records were exported. Catalogue hashes for each field
+and quarter are retained in the ignored aggregate audit report.
