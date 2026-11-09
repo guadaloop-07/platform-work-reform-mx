@@ -40,6 +40,11 @@ reports contain only reviewed aggregates and provenance safe to publish.
 No causal estimator is selected until P18 establishes a defensible population and
 comparison design. IMSS cells are aggregates, not person-level linkage records.
 
+The first P17 documentation increment records a [policy calendar](p17-policy-calendar.md),
+[measurement contract](p17-measurement-contract.md) and [source register](p17-source-register.md).
+It does not complete P17: the period-specific `ptpd` codebook, ENOE instrument
+version/routing validation and classification/price crosswalks remain required.
+
 P18 follows the [comparability study contract](imss-enoe-comparability.md):
 independently define candidate ENOE populations, harmonize units and coverage,
 and assess agreement with IMSS using supported common periods and survey
