@@ -49,7 +49,10 @@ and age rules, including ages 98/99, as specified in
 itself covers age 12-plus; do not confuse its full survey universe with this
 15-plus analytical restriction. Each field additionally requires applicability
 and response checks. Existing preparation validates national activity only;
-none of the additional fields below is yet validated by the prepared view.
+the additional fields below are not exposed as validated prepared-view columns.
+Issue #61 adds a separate [source/staging and catalogue audit](enoe-variable-validation.md)
+for descriptive use, with explicit missingness and unresolved routing. It does
+not implement candidate populations or remove the identification gates.
 
 ## Variable and code matrix
 
@@ -69,7 +72,7 @@ become a substantive no, zero income or nonplatform status.
 | COE2 `p6d` | Medical care through this job: `1` IMSS; `2` naval/military/Pemex; `3` ISSSTE; `4` state ISSSTE; `5` another institution; `6` no care; `9` unknown. | Principal-job question, reached through the employment questionnaire. Require COE2; separate blank/not reached from `6` and `9`. It reports access, not administrative registration, insurance-branch completeness or prior coverage. |
 | SDEM `seg_soc` | Health-institution access: `1` access, `2` no access, `3` unspecified. | Occupied precoded domain; `0` not applicable. Do not equate access with all five IMSS insurance branches or infer coverage through a particular platform. |
 | SDEM `medica5c` | `1` no benefits; `2` health access only; `3` health plus other benefits; `4` other benefits without health access; `5` unspecified. | Occupied precoded domain; `0` not applicable. Distinct from both `seg_soc` and IMSS registration. |
-| SDEM `imssissste` | `1` IMSS; `2` ISSSTE; `3` other; `4` no care; `5` unspecified. | Occupied precoded domain; `0` not applicable. Validate reconstruction before replacing the job-specific `p6d`; not a unique-person match to IMSS. |
+| SDEM `imssissste` | `1` IMSS; `2` ISSSTE; `3` other; `4` no care; `5` unspecified. | Occupied precoded domain; `0` not applicable. The #61 audit confirms agreement with the documented grouping of `p6d=2..4` under code 2; this includes naval/military/Pemex, not only the literal ISSSTE response. Retain job-specific `p6d` for institution detail; not a unique-person match to IMSS. |
 | SDEM `emp_ppal` | `1` informal principal employment; `2` formal principal employment. | `0` not applicable; blank/unrecognized separate. Describes the principal job's derived classification, not previous informality or informal-sector status. Use the released classification; reconstructing it requires separate methodology validation. |
 | SDEM `t_tra`; COE2 `p7` | `t_tra`: `1` one job, `2` two jobs. `p7`: secondary-activity responses `1–6`, `7` no other job, `9` unknown. | `t_tra=0` not applicable; require COE2 for `p7`. These do not measure number of apps, accounts or employer registrations. Primary-job-only candidates can miss secondary platform activity. |
 | SDEM `ingocup` | Monthly labor-income field; dictionary range `1–999998`. | Income is outside the present executable contract: separately verify questionnaire period conversion, zero-income treatment, missing/special codes, job coverage and deflation. Do not apply legal platform net-income factors or the statutory threshold to this field. |
@@ -83,8 +86,10 @@ after earnings paths, including a direct path for unpaid work. Thus a missing
 income answer does not itself establish no health access. The downloaded
 instrument bears `COE 2021`; its routing is supporting evidence, while the
 reviewed release dictionaries establish the actual field names and response
-codes for each period. A period-specific instrument-version confirmation is
-still required before implementing questionnaire routing. Preserve the downloaded
+codes for each period. Issue #61 subsequently retrieved the 2025 RNM-linked COE BÁSICO 2023
+seventh version and checked the selected routes; see [S12](p17-source-register.md#s12-enoe-variable-validation-supplements-2026-11-09).
+2026 Q2 instrument-version confirmation and complete path validation remain
+required before implementing general questionnaire-routing rules. Preserve the downloaded
 instrument vintage rather than inventing a separate 2026 version.
 
 ## Catalogue findings and unresolved transformations
