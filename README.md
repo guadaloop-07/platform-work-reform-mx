@@ -31,3 +31,7 @@ Follow the [local database guide](docs/local-database.md) to configure the isola
 PostgreSQL service. Never reuse another project's credentials or database.
 After migration, follow the [backup and restore guide](docs/backup-and-restore.md)
 to create and verify independent recovery copies.
+
+For short-panel research, see the
+[ENOE 2025 Q2–Q3 linkage feasibility audit](docs/enoe-linkage-audit.md).
+It reports sample linkage diagnostics, not national transitions or causal effects.

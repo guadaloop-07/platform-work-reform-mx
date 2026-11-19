@@ -43,3 +43,11 @@ independently stored and restored on 2026-10-30; see `backup-and-restore.md` for
 the verified scope and remaining limitations. Shared
 deployment and least-privilege analyst accounts remain P19. ENOE analytical
 preparation and causal analysis remain subsequent work.
+
+## ENOE short-panel linkage feasibility (issue #65)
+
+The [2025 Q2–Q3 linkage audit](enoe-linkage-audit.md) reconciles the reviewed
+sources and reports unique-key, interview and demographic consistency plus
+baseline-screen retention. It supplies sample feasibility diagnostics only;
+longitudinal weights, national transition estimates, platform identification and
+precision remain unvalidated. Open occupation/coverage PRs remain separate.
