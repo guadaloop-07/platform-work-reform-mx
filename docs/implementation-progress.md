@@ -43,3 +43,15 @@ independently stored and restored on 2026-10-30; see `backup-and-restore.md` for
 the verified scope and remaining limitations. Shared
 deployment and least-privilege analyst accounts remain P19. ENOE analytical
 preparation and causal analysis remain subsequent work.
+
+## National descriptive coverage pilot (issue #63)
+
+The [ENOE occupational-screen pilot](enoe-coverage-pilot.md) implements a
+source-reconciled national repeated-cross-section diagnostic for 2025 Q2/Q3/Q4
+and 2026 Q2. It does not complete P18 IMSS–ENOE comparability or issue #42
+precision. The #61 / #62 variable review remains a separate dependency.
+
+The v2 [immediate 2025 Q2–Q3 extension](enoe-coverage-pilot.md#immediate-2025-q2q3-extension)
+adds released principal-job formality counts/shares and a two-period execution
+window under the same issue #63 / PR #64. Real-source execution reconciled;
+the descriptive pattern differs by occupational screen and is not a causal result.
