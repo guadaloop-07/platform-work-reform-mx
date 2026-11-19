@@ -191,3 +191,15 @@ def test_duplicate_manifest_fails_before_any_output(tmp_path, monkeypatch):
     with pytest.raises(ValueError, match="Duplicate"):
         main()
     assert not output.exists()
+
+
+def test_transition_extension_counts_only_supported_pairs_without_survivor_occupation_filter():
+    a = person(emp_ppal="1", est_d_tri="0001")
+    b = person(n_ent="3", p3="2111", p4a="9999", emp_ppal="2", est_d_tri="0001")
+    r = audit_pairs([a], [b], include_transitions=True)
+    g = r["sample_transitions"]["groups"]["passenger"]["summary"]
+    assert g["informal_to_formal_n"] == 1
+    assert r["groups"]["passenger"]["followup_availability"]["same_screen"] == 0
+    conflict = {**b, "sex": "2"}
+    r = audit_pairs([a], [conflict], include_transitions=True)
+    assert r["sample_transitions"]["groups"]["passenger"]["summary"]["linked_n"] == 0

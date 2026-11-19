@@ -51,3 +51,8 @@ sources and reports unique-key, interview and demographic consistency plus
 baseline-screen retention. It supplies sample feasibility diagnostics only;
 longitudinal weights, national transition estimates, platform identification and
 precision remain unvalidated. Open occupation/coverage PRs remain separate.
+
+The v2 optional sample-transition extension under issue #65 / PR #66 adds
+released principal-job informal/formal matrices, explicit nonemployment states,
+full-birth-date sensitivity and event design-support counts. It reports unweighted
+linked-sample transitions only; national expansion and precision remain open.

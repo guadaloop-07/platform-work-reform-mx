@@ -18,8 +18,9 @@ from platform_work_reform.enoe_pilot_indicators import FIELDS, Audit
 from platform_work_reform.enoe_preparation import audit as preparation_audit
 from platform_work_reform.enoe_releases import release
 from platform_work_reform.enoe_staging import ARCHIVE_SHA256, CONTRACTS, digest, members
+from platform_work_reform.enoe_transitions import TransitionAudit, write_transitions
 
-VERSION = "enoe-linkage-audit-v1"
+VERSION = "enoe-linkage-audit-v2"
 PERIODS = ((2025, 2), (2025, 3))
 KEY = ("entity", "con", "v_sel", "n_hog", "h_mud", "n_ren")
 DEMOGRAPHICS = ("n_ent", "sex", "nac_dia", "nac_mes", "nac_anio", "upm", "cd_a")
@@ -167,7 +168,8 @@ def composition(row):
     }
 
 
-def audit_pairs(baseline, followup):
+def audit_pairs(baseline, followup, *, include_transitions=False):
+    transitions = TransitionAudit(GROUPS) if include_transitions else None
     left, left_ambiguous, left_info = index_people(baseline)
     right, right_ambiguous, right_info = index_people(followup)
     household = {key[:5] for key in right}
@@ -227,6 +229,10 @@ def audit_pairs(baseline, followup):
                 if not b["eligible"]
                 else "supported_both_eligible"
             )
+        if transitions is not None:
+            transitions.add_baseline(a, names, status)
+        if status == "supported_both_eligible" and transitions is not None:
+            transitions.add_pair(a, b, names, pair_evidence(a, b)["birth_components_comparable"])
         for name in names:
             group = summaries[name]
             group["flow"]["baseline"] += 1
@@ -283,10 +289,11 @@ def audit_pairs(baseline, followup):
         ),
         "followup_first_interview_rows": sum(r["n_ent"] == "1" for r in followup),
         "groups": output,
+        "sample_transitions": transitions.report() if transitions is not None else None,
     }
 
 
-def load_period(settings, entry):
+def load_period(settings, entry, *, include_transitions=False):
     quarter = entry["quarter"]
     if (entry["year"], quarter) not in PERIODS:
         raise ValueError("Unsupported period")
@@ -314,8 +321,11 @@ def load_period(settings, entry):
         c1 = dict(read_records(archive, "COE1", quarter, ("p3", "p4a")))
         c2 = {key for key, _ in read_records(archive, "COE2", quarter, ())}
         catalogues, provenance = {}, {}
-        for field in ("p3", "p4a"):
-            base = members("COE1", 2025, quarter)[0].split("/")[0]
+        catalogue_fields = [("COE1", "p3"), ("COE1", "p4a")]
+        if include_transitions:
+            catalogue_fields.append(("SDEM", "emp_ppal"))
+        for table, field in catalogue_fields:
+            base = members(table, 2025, quarter)[0].split("/")[0]
             raw = archive.read(f"{base}/catalogos/{field}.csv")
             rows = list(csv.reader(io.StringIO(raw.decode("utf-8", errors="strict")), strict=True))
             if not rows or any(len(r) != 2 for r in rows) or rows[0][0] != "CVE":
@@ -335,6 +345,8 @@ def load_period(settings, entry):
             "n_ren",
             "pos_ocu",
         )
+        if include_transitions:
+            selected = (*selected, "emp_ppal", "est_d_tri")
         national = Audit()
         people = []
         selected_hash = hashlib.sha256()
@@ -353,6 +365,9 @@ def load_period(settings, entry):
                 for field in ("p3", "p4a"):
                     if row[field] and row[field] not in catalogues[field]:
                         raise ValueError("Out-of-catalogue occupied response")
+            if include_transitions and row["eligible"] and row["clase2"] == "1":
+                if row["emp_ppal"] and row["emp_ppal"] not in catalogues["emp_ppal"]:
+                    raise ValueError("Out-of-catalogue emp_ppal")
             people.append(row)
     report = national.report()
     if (
@@ -428,6 +443,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("manifest", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--transitions", action="store_true")
     args = parser.parse_args()
     entries = json.loads(args.manifest.read_text())
     if not isinstance(entries, list):
@@ -445,7 +461,9 @@ def main():
     loaded, provenance = [], []
     for entry in chosen:
         print(f"Reconciling 2025Q{entry['quarter']}", file=sys.stderr)
-        people, source = load_period(Settings.from_env(), entry)
+        people, source = load_period(
+            Settings.from_env(), entry, include_transitions=args.transitions
+        )
         loaded.append(people)
         provenance.append(source)
     report = {
@@ -453,14 +471,18 @@ def main():
         "source_provenance": provenance,
         "national_transition_estimates": False,
         "precision_validated": False,
-        **audit_pairs(*loaded),
+        **audit_pairs(*loaded, include_transitions=args.transitions),
     }
     args.output_dir.mkdir(parents=True, exist_ok=True)
     (args.output_dir / "linkage.json").write_text(
         json.dumps(report, indent=2, sort_keys=True) + "\n"
     )
     write_summary(args.output_dir, report)
-    print((args.output_dir / "linkage.md").read_text())
+    if args.transitions:
+        write_transitions(args.output_dir, report)
+        print((args.output_dir / "transitions.md").read_text())
+    else:
+        print((args.output_dir / "linkage.md").read_text())
 
 
 if __name__ == "__main__":

@@ -1,8 +1,8 @@
 # ENOE 2025 Q2–Q3 individual-linkage feasibility audit
 
-Issue #65. Contract `enoe-linkage-audit-v1`. This is an aggregate sample-feasibility
-audit, not a longitudinal analytical release. It creates no microdata export,
-national transition estimate, formalization rate, individual IMSS linkage,
+Issue #65. Current contract `enoe-linkage-audit-v2`. This is an aggregate sample-feasibility
+audit with an optional sample-transition extension, not a validated population release. It creates no microdata export,
+national transition estimate, national formalization rate, individual IMSS linkage,
 platform label or causal effect. It is independent of open PRs #62 and #64.
 
 ## Evidence and scope
@@ -127,7 +127,7 @@ attrition treatment, target-domain precision and rotating-panel covariance.
 Issue #42 remains unresolved. Household identity does not identify employer/job
 continuity, and panel linkage alone does not identify platform work or causality.
 
-## Local operational findings (2026-11-19)
+## Original v1 local operational findings (2026-11-19)
 
 Both original archives passed hash and national source/preparation reconciliation.
 Each period's selected occupation catalogues and SDEM dictionary hashes are
@@ -203,3 +203,114 @@ In particular `unmatched_dwelling_not_in_sdem` means absent from that supported
 index; it does not prove the dwelling was absent from all Q3 source tables.
 All-SDEM interview/residence matrices and baseline-type counts use broader
 universes than screen-specific eligible-adult retention and must not be mixed.
+
+## Optional sample employment transitions
+
+The user-authorized v2 extension uses `--transitions` to tabulate released
+principal-employment states within the consistency-supported, both-eligible
+pairs. It does not require continued occupation or continued employment.
+`emp_ppal=1` is informal principal employment, 2 formal, 0 not applicable and
+blank unresolved. For nonoccupied eligible people, `clase2=2` is unemployment;
+3/4 are inactivity, not informal work. Occupied codes are checked against both
+original source catalogues and unknowns never become formal/informal statuses.
+
+```bash
+uv run --locked python -m platform_work_reform.enoe_linkage \
+  artifacts/enoe-quarter-manifest.json --transitions \
+  --output-dir artifacts/enoe-sample-transitions
+```
+
+The matrix has six states per endpoint, including explicit unknown/not-applicable
+formality. Its sum equals the supported linked sample for every baseline screen.
+The informal→formal percentage divides the corresponding sample count by **all
+linked people informal at baseline**, including those unemployed, inactive or
+with unknown formality at follow-up. The reverse rate has its own formal-baseline
+denominator. These rates must not be subtracted as an estimate of net national
+formalization. Both endpoints refer to principal employment and do not establish
+continuity of employer/job, a platform relationship or a reform effect.
+
+`transitions.csv` exports all 36 cells per screen, including zeros.
+`transitions.md` summarizes the two directional flows. `linkage.json` adds
+sample matrices, baseline-state retention by linkage status and a full-birth-date
+sensitivity requiring three comparable components. The latter has its own
+baseline denominators; it is not a random subsample by assumption. Existing v1
+outputs remain separate; default execution without the flag does not read new
+employment fields or estimate transitions.
+
+### Precision and expansion are separate questions
+
+Records do not possess statistical significance. Significance concerns a stated
+hypothesis/contrast; precision concerns uncertainty of an estimator; expansion
+weights concern the target population and selection/response probabilities.
+A p-value or sample count alone cannot authorize a weight or prove adequate
+precision. A high retention rate also does not remove nonresponse selection.
+
+INEGI's [ENOE 2025 metadata](https://www.inegi.org.mx/rnm/index.php/catalog/1121)
+describes quarterly weight adjustments and ultimate-cluster precision estimates.
+Its [tabulated precision documentation](https://www.inegi.org.mx/contenidos/programas/enoe/14ymas/doc/enoe_tabulados.pdf)
+explains why rare characteristics and finer breakdowns need cell-specific errors
+and CVs. These sources do not validate a longitudinal weight for our selected
+linked sample. No universal minimum sample-size rule is applied here.
+
+The extension reports the number of baseline nested UPMs and entity/strata with
+observed events in each cell, maximum events in one UPM and missing-design counts.
+These are unweighted support diagnostics, not design degrees of freedom, effective
+sample sizes, SEs, CVs or confidence intervals. A stratum with a single event UPM
+is not necessarily a singleton sampling stratum: zero-event UPMs still belong in
+variance estimation. No zero-domain design units are declared disposable.
+
+Before nationally expanding transitions, establish a suitable longitudinal target
+and weights accounting for rotation, follow-up eligibility, unsupported telephone
+records, linkage/response selection and calibration, and validate the variance
+estimator. Neither summing baseline/follow-up `fac_tri` over survivors nor applying
+a universal 1/0.8 correction is treated as validated. Issue #42's variance
+population and singleton questions remain open, with additional longitudinal
+requirements. This restriction does not imply weights can never be developed;
+it means this extension does not yet supply a justified population estimator.
+
+### V2 sample-transition findings (2026-11-19)
+
+The real two-quarter execution with `--transitions` reverified original hashes,
+headers, national preparation reconciliation and occupation catalogues and
+additionally verified original `emp_ppal` catalogue membership. Supported linkage
+counts match the original audit. Every six-by-six matrix sums to the corresponding
+linked sample, and baseline-state retention partitions sum to the full baseline
+sample. Full-birth counts never exceed their corresponding all-supported cells.
+
+| Baseline screen | Linked informal in Q2 | Informal→formal | Sample % | Linked formal in Q2 | Formal→informal | Sample % |
+|---|---:|---:|---:|---:|---:|---:|
+| All eligible | 65,173 | 7,931 | 12.17 | 61,300 | 7,685 | 12.54 |
+| Passenger | 2,018 | 348 | 17.24 | 860 | 264 | 30.70 |
+| Delivery | 768 | 82 | 10.68 | 291 | 85 | 29.21 |
+| Narrow passenger | 1,958 | 334 | 17.06 | 670 | 237 | 35.37 |
+| Broad including freight | 3,678 | 625 | 16.99 | 3,008 | 589 | 19.58 |
+
+These are individual-state changes within consistency-supported sample pairs,
+not expanded national people or reform effects. Screens are fixed at baseline
+and include nonplatform work. Changes may accompany a different job or occupation.
+The two directional percentages have different denominators. Their difference
+is not a net formalization rate. Full-date-only sensitivity gives 308/1,839
+(16.75%) passenger informal→formal cases and 71/710 (10.00%) delivery cases,
+versus 17.24% and 10.68% with all supported links. This supports a bounded identity
+sensitivity check, not general robustness to attrition, classification or design.
+
+Among linked informal baseline members, 152 passenger and 102 delivery cases move
+to unemployment or inactivity. They remain in the reported informal-baseline
+denominators. Do not condition on continued occupation or employment to recover a
+more favorable transition proportion.
+
+The passenger informal→formal cell has 348 observations across 335 nested baseline
+UPMs and 181 entity/strata; the delivery cell has 82 across 81 UPMs and 65 strata.
+The largest event count in one UPM is two for each cell; no baseline design key
+is missing. This indicates the observed events are not concentrated in one or
+two UPMs, but does not establish precision or a significant reform effect.
+Zero-event UPMs and the full variance population remain necessary for inference.
+
+Six additional synthetic tests check nonemployment/unknown denominators, reverse
+flows, full-date sensitivity, nested design support, unweighted arithmetic,
+nonapplicable codes, full-cell exports and linkage integration without an
+occupation-survival condition (33 tests across linkage and transition modules).
+`just check` passed 143 unit tests; `just db-test` passed 32 isolated integration
+tests, with one optional original-source check skipped. No new dependencies,
+migration, source mutation or population weights were introduced. The aggregate
+outputs are ignored under `artifacts/enoe-sample-transitions/`.
