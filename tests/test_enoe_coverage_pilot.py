@@ -8,6 +8,7 @@ from platform_work_reform.enoe_coverage_pilot import GROUPS, Group, changes, gro
 def person(weight="10"):
     return {
         "fac_tri": weight,
+        "emp_ppal": "2",
         "eda": "35",
         "sex": "2",
         "anios_esc": "12",
@@ -79,6 +80,8 @@ def test_profile_preserves_universe_and_occupation_missingness(monkeypatch):
 
     class Archive:
         def read(self, path):
+            if path.endswith("emp_ppal.csv"):
+                return b"CVE,DESCRIP\n0,Not applicable\n1,Informal\n2,Formal\n"
             if path.endswith("p3.csv"):
                 return b"CVE,DESCRIP\n8342,Passenger\n9999,Unknown\n"
             if path.endswith("p4a.csv"):
@@ -125,3 +128,80 @@ def test_manifest_duplicate_periods_fail_before_data_access(tmp_path, monkeypatc
     with pytest.raises(ValueError, match="Exactly one"):
         main()
     assert not output.exists()
+
+
+def test_formality_partition_and_medical_access_are_distinct():
+    g = Group()
+    for status, weight, medical in (
+        ("1", "10", "1"),
+        ("2", "20", "6"),
+        ("0", "30", "9"),
+        ("", "40", ""),
+    ):
+        g.add({**person(weight), "emp_ppal": status}, {"p4": "1"}, {"p6d": medical})
+    result = g.report()
+    assert result["weighted"]["formal"] == 20
+    assert result["weighted"]["informal"] == 10
+    assert result["weighted"]["formality_not_applicable"] == 30
+    assert result["weighted"]["formality_blank"] == 40
+    assert result["formal_percent_all"] == 20
+    assert result["informal_percent_all"] == 10
+    # IMSS access does not silently rewrite the released informality category.
+    assert result["weighted"]["imss"] == 10
+    assert (
+        sum(
+            result["weighted"][k]
+            for k in ("formal", "informal", "formality_not_applicable", "formality_blank")
+        )
+        == 100
+    )
+
+
+def test_invalid_formality_fails():
+    with pytest.raises(ValueError, match="emp_ppal"):
+        Group().add({**person(), "emp_ppal": "9"}, {"p4": "1"}, {"p6d": "1"})
+
+
+def test_immediate_changes_distinguish_count_growth_from_share_decline(tmp_path):
+    from platform_work_reform.enoe_coverage_pilot import immediate_changes, write_immediate
+
+    periods = []
+    for period, formal, informal in (("2025Q2", "20", "80"), ("2025Q3", "30", "170")):
+        g = Group()
+        g.add(person(formal), {"p4": "1"}, {"p6d": "1"})
+        g.add({**person(informal), "emp_ppal": "1"}, {"p4": "1"}, {"p6d": "6"})
+        periods.append({"period": period, "groups": {name: g.report() for name in GROUPS}})
+    rows = immediate_changes(periods)
+    formal = next(r for r in rows if r["group"] == "passenger" and r["metric"] == "formal")
+    assert formal["change_weighted"] == 10
+    assert formal["change_pp"] == -5
+    occupied = next(r for r in rows if r["group"] == "passenger" and r["metric"] == "occupied")
+    assert occupied["change_weighted"] == 100
+    assert occupied["change_pp"] == 0
+    write_immediate(tmp_path, rows)
+    assert "Formal principal employment" in (tmp_path / "immediate.md").read_text()
+    assert len((tmp_path / "immediate.csv").read_text().splitlines()) == 25
+
+
+def test_immediate_manifest_accepts_only_two_periods_or_filters_reviewed_four():
+    from platform_work_reform.enoe_coverage_pilot import PERIODS, select_entries
+
+    entries = [{"year": y, "quarter": q, "run_id": str(i)} for i, (y, q) in enumerate(PERIODS)]
+    assert select_entries(entries, "immediate") == entries[:2]
+    assert select_entries(entries[:2], "immediate") == entries[:2]
+    with pytest.raises(ValueError, match="Exactly one"):
+        select_entries(entries[:1], "immediate")
+    with pytest.raises(ValueError, match="Duplicate run"):
+        select_entries([{**e, "run_id": "same"} for e in entries[:2]], "immediate")
+
+
+def test_empty_immediate_denominators_remain_null():
+    from platform_work_reform.enoe_coverage_pilot import immediate_changes
+
+    periods = [
+        {"period": period, "groups": {name: Group().report() for name in GROUPS}}
+        for period in ("2025Q2", "2025Q3")
+    ]
+    for row in immediate_changes(periods):
+        assert row["change_weighted"] == 0
+        assert row["change_pp"] is None
