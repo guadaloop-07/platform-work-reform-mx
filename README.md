@@ -19,7 +19,9 @@ only runs when committing.
 
 Use an issue-linked branch and a pull request for every change. Keep credentials,
 source microdata, database volumes, backups, and generated outputs outside Git.
-Infrastructure is being introduced incrementally; no empirical results exist yet.
+Infrastructure and measurement are being introduced incrementally. The
+[national ENOE coverage pilot](docs/enoe-coverage-pilot.md) provides descriptive
+occupational-screen results; causal effects remain unestimated.
 
 See [contribution rules](CONTRIBUTING.md), the
 [implementation roadmap](docs/implementation-plan.md), and
