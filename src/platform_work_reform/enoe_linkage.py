@@ -45,13 +45,20 @@ def screens(row):
     return result
 
 
-def read_records(archive, table, quarter, fields):
+def read_records(archive, table, quarter, fields, *, year=2025, source_contract=None):
     """Exact within-quarter keys, with ASCII-only selected codes and no text repair."""
-    with archive.open(members(table, 2025, quarter)[0]) as stream:
+    with archive.open(members(table, year, quarter)[0]) as stream:
         reader = csv.reader(io.TextIOWrapper(stream, encoding="latin-1", newline=""), strict=True)
         header = next(reader)
-        validate_header(2025, quarter, table, header)
-        selected = tuple(dict.fromkeys((*key_fields(2025, quarter, table), *fields)))
+        if source_contract is None:
+            validate_header(year, quarter, table, header)
+            keys = key_fields(year, quarter, table)
+        else:
+            signature = hashlib.sha256("\n".join(header).encode("ascii")).hexdigest()
+            if header != source_contract["header"] or signature != source_contract["header_sha256"]:
+                raise ValueError("Unknown historical header")
+            keys = tuple(source_contract["key"])
+        selected = tuple(dict.fromkeys((*keys, *fields)))
         positions = [header.index(name) for name in selected]
         seen = set()
         for raw in reader:
@@ -60,7 +67,7 @@ def read_records(archive, table, quarter, fields):
             row = dict(zip(selected, (raw[p].strip() for p in positions), strict=True))
             for value in row.values():
                 value.encode("ascii", errors="strict")
-            key = tuple(row[f] for f in key_fields(2025, quarter, table))
+            key = tuple(row[f] for f in keys)
             if not all(key) or key in seen:
                 raise ValueError("Missing or duplicate within-quarter person key")
             seen.add(key)
@@ -98,7 +105,7 @@ def index_people(rows):
     )
 
 
-def pair_evidence(first, second):
+def pair_evidence(first, second, *, year=2025):
     """Conservative diagnostic rules; demographic consistency is not proof of identity."""
     conflicts, unresolved = [], []
     if first["n_ent"] not in {"1", "2", "3", "4"} or second["n_ent"] != str(
@@ -127,7 +134,7 @@ def pair_evidence(first, second):
     elif int(ages[1]) - int(ages[0]) not in {0, 1}:
         conflicts.append("age")
     birth_known = 0
-    for field, maximum in (("nac_dia", 31), ("nac_mes", 12), ("nac_anio", 2025)):
+    for field, maximum in (("nac_dia", 31), ("nac_mes", 12), ("nac_anio", year)):
         values = (first[field], second[field])
         lower = 1900 if field == "nac_anio" else 1
         known = [v.isascii() and v.isdigit() and lower <= int(v) <= maximum for v in values]
@@ -168,7 +175,7 @@ def composition(row):
     }
 
 
-def audit_pairs(baseline, followup, *, include_transitions=False):
+def audit_pairs(baseline, followup, *, include_transitions=False, year=2025):
     transitions = TransitionAudit(GROUPS) if include_transitions else None
     left, left_ambiguous, left_info = index_people(baseline)
     right, right_ambiguous, right_info = index_people(followup)
@@ -186,7 +193,7 @@ def audit_pairs(baseline, followup, *, include_transitions=False):
         a, b = left[key], right[key]
         matrix[f"{a['n_ent']}->{b['n_ent']}"] += 1
         residence_matrix[f"{a['c_res']}->{b['c_res']}"] += 1
-        evidence = pair_evidence(a, b)
+        evidence = pair_evidence(a, b, year=year)
         diagnostics["candidate_pairs"] += 1
         diagnostics[f"birth_components_comparable_{evidence['birth_components_comparable']}"] += 1
         diagnostics.update(f"conflict_{c}" for c in evidence["conflicts"])
@@ -219,7 +226,7 @@ def audit_pairs(baseline, followup, *, include_transitions=False):
                 else "unmatched_dwelling_not_in_sdem"
             )
         else:
-            evidence = pair_evidence(a, b)
+            evidence = pair_evidence(a, b, year=year)
             status = (
                 "candidate_conflict"
                 if evidence["conflicts"]
@@ -232,7 +239,9 @@ def audit_pairs(baseline, followup, *, include_transitions=False):
         if transitions is not None:
             transitions.add_baseline(a, names, status)
         if status == "supported_both_eligible" and transitions is not None:
-            transitions.add_pair(a, b, names, pair_evidence(a, b)["birth_components_comparable"])
+            transitions.add_pair(
+                a, b, names, pair_evidence(a, b, year=year)["birth_components_comparable"]
+            )
         for name in names:
             group = summaries[name]
             group["flow"]["baseline"] += 1
@@ -255,7 +264,7 @@ def audit_pairs(baseline, followup, *, include_transitions=False):
                 for field, value in composition(a).items():
                     group["composition"][f"unmatched|{field}"][value] += 1
             if status == "supported_both_eligible":
-                evidence = pair_evidence(a, b)
+                evidence = pair_evidence(a, b, year=year)
                 group["followup"][
                     f"birth_components_comparable_{evidence['birth_components_comparable']}"
                 ] += 1
