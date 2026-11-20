@@ -35,3 +35,6 @@ to create and verify independent recovery copies.
 For short-panel research, see the
 [ENOE 2025 Q2–Q3 linkage feasibility audit](docs/enoe-linkage-audit.md).
 It reports sample linkage diagnostics, not national transitions or causal effects.
+
+[Historical ENOE Q2–Q3 sample comparison, 2023–2025](docs/enoe-historical-transitions.md)
+adds fixed-screen descriptive transitions without national expansion or inference.

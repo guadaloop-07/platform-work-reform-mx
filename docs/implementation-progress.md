@@ -56,3 +56,12 @@ The v2 optional sample-transition extension under issue #65 / PR #66 adds
 released principal-job informal/formal matrices, explicit nonemployment states,
 full-birth-date sensitivity and event design-support counts. It reports unweighted
 linked-sample transitions only; national expansion and precision remain open.
+
+## Historical ENOE sample comparison (issue #67)
+
+The [2023–2025 Q2–Q3 comparison](enoe-historical-transitions.md), dependent on
+issue #65 / PR #66, reconciles six original releases and preserves exact 2025
+count parity. It adds fixed-screen forward/reverse rates, retention, composition
+and complete-birth-date sensitivity. No exceptional positive passenger-screen
+formalization pattern appears descriptively; precision and causality remain open.
+Historical releases are read directly without extending database ingestion.
